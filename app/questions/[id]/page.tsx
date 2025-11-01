@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { LinkOutlined, PlayCircleFilled } from '@ant-design/icons';
+import { Tag, Tooltip } from 'antd';
 import Link from 'next/link';
 import { notFound, useParams, useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useDataContext } from '@/providers/DataProvider';
 import { useFreeAccess } from '@/providers/FreeAccessProvider';
+import type { AnswerVariant } from '@/types';
 
 const levelLabel: Record<string, string> = {
   junior: 'Junior',
@@ -25,6 +28,13 @@ const typeLabel: Record<string, string> = {
   coding: 'Coding',
   behavioral: 'Behavioral',
   system_design: 'System design',
+};
+
+const sourceMeta: Record<AnswerVariant['source'], { label: string; color: string }> = {
+  youtube: { label: 'YouTube', color: 'red' },
+  article: { label: 'Статья', color: 'blue' },
+  podcast: { label: 'Подкаст', color: 'purple' },
+  blog: { label: 'Блог', color: 'green' },
 };
 
 export default function QuestionPage() {
@@ -198,6 +208,55 @@ export default function QuestionPage() {
                   ))}
                 </ul>
               </div>
+
+              {question.answerVariants.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  <h2 className="text-lg font-semibold text-slate-900">Как отвечают другие</h2>
+                  <p className="text-sm text-slate-500">
+                    Собрали открытые интервью и материалы, где кандидаты разбирают именно этот вопрос. Таймкоды ведут к ключевым моментам.
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {question.answerVariants.map((variant) => {
+                      const meta = sourceMeta[variant.source];
+                      const icon = variant.source === 'youtube' ? (
+                        <PlayCircleFilled className="text-lg" />
+                      ) : (
+                        <LinkOutlined className="text-lg" />
+                      );
+                      return (
+                        <a
+                          key={variant.id}
+                          href={variant.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group flex flex-col gap-2 rounded-2xl border border-slate-200 px-4 py-3 transition hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                                {icon}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-semibold text-slate-800 group-hover:text-indigo-600">{variant.title}</span>
+                                <span className="text-xs text-slate-500">{variant.contributor} · {variant.publishedAt}</span>
+                              </div>
+                            </div>
+                            <Tag color={meta.color}>{meta.label}</Tag>
+                          </div>
+                          <p className="text-sm text-slate-600">{variant.summary}</p>
+                          {variant.timecode && (
+                            <Tooltip title="Перейти к таймкоду">
+                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-600">
+                                <PlayCircleFilled /> Таймкод {variant.timecode}
+                              </span>
+                            </Tooltip>
+                          )}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-slate-900">Follow-up</h2>

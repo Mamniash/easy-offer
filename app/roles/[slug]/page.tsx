@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { LockFilled, PlayCircleFilled, StarFilled } from '@ant-design/icons';
+import { Avatar, Button, Modal, Progress, Tag, Tooltip } from 'antd';
 import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 
 import { useDataContext } from '@/providers/DataProvider';
@@ -31,9 +33,20 @@ const STAGE_LABELS: Record<string, string> = {
   take_home: 'Take-home',
 };
 
-const ITEMS_PER_PAGE = 50;
+const MAX_VISIBLE = 50;
+
+const companyPalette = [
+  ['#4338CA', '#7C3AED'],
+  ['#0EA5E9', '#2563EB'],
+  ['#14B8A6', '#0D9488'],
+  ['#F97316', '#DB2777'],
+  ['#8B5CF6', '#6366F1'],
+  ['#F59E0B', '#F97316'],
+];
 
 const formatPercent = (value: number) => `${Math.round(value)}%`;
+
+const formatNumber = (value: number) => new Intl.NumberFormat('ru-RU').format(Math.round(value));
 
 const buildCsv = (items: QuestionRecord[]) => {
   const headers = [
@@ -93,9 +106,8 @@ export default function RolePage() {
   const [type, setType] = useState<'all' | QuestionRecord['type']>('all');
   const [stage, setStage] = useState<'all' | QuestionRecord['interviewStage']>('all');
   const [query, setQuery] = useState('');
-  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [lockMessage, setLockMessage] = useState<string | null>(null);
+  const [proPrompt, setProPrompt] = useState<{ title: string; description: string } | null>(null);
 
   const { bundle } = useDataContext();
   const { remaining, limit } = useFreeAccess();
@@ -140,9 +152,8 @@ export default function RolePage() {
       .sort((a, b) => b.frequencyScore - a.frequencyScore);
   }, [questions, level, type, stage, query]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const visible = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const visible = filtered.slice(0, MAX_VISIBLE);
+  const hasMore = filtered.length > MAX_VISIBLE;
 
   const popularCompanies = useMemo(() => {
     const map = new Map<string, number>();
@@ -165,18 +176,31 @@ export default function RolePage() {
 
   const handleQuestionClick = (question: QuestionRecord) => {
     if (remaining <= 0) {
-      setLockMessage('Лимит 20 раскрытий в сутки исчерпан. Оформите Pro, чтобы смотреть больше вопросов.');
+      setProPrompt({
+        title: 'Доступно в Pro',
+        description: 'Лимит 20 раскрытий в сутки исчерпан. Оформите Pro, чтобы открывать неограниченно и сохранять ответы.',
+      });
       return;
     }
     router.push(`/questions/${encodeURIComponent(question.id)}`);
   };
 
   const handleCompanyClick = () => {
-    setLockMessage('Фильтр по компаниям доступен в Pro-версии.');
+    setProPrompt({
+      title: 'Фильтры по компаниям — в Pro',
+      description: 'В подписке появятся детальные фильтры по брендам, тренды вопросов и сравнение форматов интервью.',
+    });
   };
 
   const handleExport = () => {
-    downloadCsv(visible, `${role.slug}-questions-page-${currentPage}.csv`);
+    downloadCsv(visible, `${role.slug}-questions-top-${visible.length}.csv`);
+  };
+
+  const handleShowMore = () => {
+    setProPrompt({
+      title: 'Весь каталог в Pro',
+      description: 'Мы показываем первые 50 вопросов, чтобы ты понял структуру. Подпишись на Pro, чтобы открыть полный список и доступ к задачам.',
+    });
   };
 
   return (
@@ -226,7 +250,6 @@ export default function RolePage() {
                   type="button"
                   onClick={() => {
                     setLevel(value as typeof level);
-                    setPage(1);
                   }}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                     level === value
@@ -243,10 +266,9 @@ export default function RolePage() {
                 Тип собеседования
                 <select
                   value={stage}
-                  onChange={(event) => {
-                    setStage(event.target.value as typeof stage);
-                    setPage(1);
-                  }}
+                    onChange={(event) => {
+                      setStage(event.target.value as typeof stage);
+                    }}
                   className="mt-1 rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700"
                 >
                   {Object.entries(STAGE_LABELS).map(([value, label]) => (
@@ -260,10 +282,9 @@ export default function RolePage() {
                 Тип вопроса
                 <select
                   value={type}
-                  onChange={(event) => {
-                    setType(event.target.value as typeof type);
-                    setPage(1);
-                  }}
+                    onChange={(event) => {
+                      setType(event.target.value as typeof type);
+                    }}
                   className="mt-1 rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700"
                 >
                   {Object.entries(TYPE_LABELS).map(([value, label]) => (
@@ -283,7 +304,6 @@ export default function RolePage() {
                     value={query}
                     onChange={(event) => {
                       setQuery(event.target.value);
-                      setPage(1);
                     }}
                     placeholder="/ — перейти к поиску"
                     className="mt-1 w-full rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700"
@@ -292,168 +312,199 @@ export default function RolePage() {
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-slate-500">Найдено {filtered.length} вопросов</p>
-              <button
-                type="button"
-                onClick={handleExport}
-                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:border-slate-400"
-              >
-                Экспорт видимого списка в CSV
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <Tag color="geekblue">Найдено {filtered.length}</Tag>
+                <Tag color="purple">Показываем {visible.length} из {filtered.length}</Tag>
+              </div>
+              <Button onClick={handleExport} className="rounded-full border-slate-300">
+                Экспорт 50 вопросов
+              </Button>
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
+          <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
             <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="grid grid-cols-[120px_140px_1fr] items-center gap-4 text-xs font-medium uppercase tracking-wide text-slate-400">
-                <span title="Прогноз шанса услышать вопрос в ближайшее время">Шанс</span>
-                <span title="Частота в процентах по собеседованиям">Частота</span>
-                <span>Вопрос</span>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-lg font-semibold text-slate-900">Топ вопросов по роли</h2>
+                <p className="text-sm text-slate-500">Открываем первые 50 карточек, чтобы ты увидел структуру и формат ответов.</p>
               </div>
-              <div className="h-px bg-slate-200" />
               {isLoading ? (
                 <div className="flex flex-col gap-3">
                   {Array.from({ length: 6 }).map((_, index) => (
-                    <div key={index} className="animate-pulse rounded-2xl bg-slate-100 p-4" />
+                    <div key={index} className="h-28 animate-pulse rounded-3xl bg-slate-100" />
                   ))}
                 </div>
               ) : visible.length === 0 ? (
-                <div className="flex flex-col items-start gap-3 rounded-2xl bg-slate-50 p-6">
+                <div className="flex flex-col items-start gap-3 rounded-3xl bg-slate-50 p-6">
                   <p className="text-sm font-medium text-slate-700">По таким фильтрам ничего не нашли.</p>
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => {
                       setLevel('all');
                       setType('all');
                       setStage('all');
                       setQuery('');
                     }}
-                    className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:border-slate-400"
+                    className="rounded-full border-slate-300"
                   >
                     Сбросить фильтры
-                  </button>
+                  </Button>
                 </div>
               ) : (
-                <div className="flex flex-col">
-                  {visible.map((question) => (
-                    <button
-                      key={question.id}
-                      type="button"
-                      onClick={() => handleQuestionClick(question)}
-                      className="group grid grid-cols-[120px_140px_1fr] items-center gap-4 rounded-2xl border border-transparent p-4 text-left transition hover:border-slate-200 hover:bg-slate-50"
-                    >
-                      <div className="flex items-center gap-2" title="Прогноз шанса получить вопрос на интервью">
-                        <span className="rounded-full bg-indigo-100 px-2 py-1 text-xs font-semibold text-indigo-600">
-                          {formatPercent(question.chance)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2" title="Частота вопроса в потоке собеседований">
-                        <div className="h-2 flex-1 rounded-full bg-slate-100">
-                          <div
-                            className="h-2 rounded-full bg-slate-500"
-                            style={{ width: `${Math.min(question.frequencyScore, 100)}%` }}
-                          />
+                <div className="flex flex-col gap-3">
+                  {visible.map((question, index) => {
+                    const palette = companyPalette[index % companyPalette.length];
+                    const videoCount = question.answerVariants.filter((variant) => variant.source === 'youtube').length;
+                    return (
+                      <button
+                        key={question.id}
+                        type="button"
+                        onClick={() => handleQuestionClick(question)}
+                        className="group flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/80 p-5 text-left transition hover:-translate-y-1 hover:border-indigo-200 hover:bg-indigo-50/60 hover:shadow-lg"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              size={48}
+                              style={{
+                                background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              icon={<StarFilled />}
+                            />
+                            <div className="flex flex-col">
+                              <span className="text-xs uppercase tracking-wide text-slate-400">Шанс услышать вопрос</span>
+                              <span className="text-lg font-semibold text-slate-900">{formatPercent(question.chance)}</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Tag color="geekblue">{LEVEL_LABELS[question.level]}</Tag>
+                            <Tag color="purple">{TYPE_LABELS[question.type]}</Tag>
+                            <Tag color="cyan">{STAGE_LABELS[question.interviewStage]}</Tag>
+                          </div>
                         </div>
-                        <span className="text-sm font-medium text-slate-600">{formatPercent(question.frequencyScore)}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900">
-                          {question.title}
-                        </span>
-                        <span className="text-xs text-slate-400">
-                          {LEVEL_LABELS[question.level]} · {TYPE_LABELS[question.type]} · {STAGE_LABELS[question.interviewStage]}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+                        <h3 className="text-base font-semibold text-slate-900 transition group-hover:text-indigo-600">{question.title}</h3>
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                          <div className="flex w-full items-center gap-3 sm:w-1/2">
+                            <Tooltip title="Частота вопроса в потоке собеседований">
+                              <Progress
+                                percent={Math.min(question.frequencyScore, 100)}
+                                showInfo={false}
+                                strokeColor="#6366F1"
+                                className="flex-1"
+                              />
+                            </Tooltip>
+                            <span className="min-w-max text-sm font-medium text-slate-600">
+                              Частота {formatPercent(question.frequencyScore)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs font-medium text-indigo-500">
+                            <PlayCircleFilled /> {videoCount} видео · {question.answerVariants.length} материалов
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
-                <div>
-                  Страница {currentPage} из {totalPages}
+              {hasMore && (
+                <div className="rounded-3xl border border-dashed border-indigo-200 bg-indigo-50/70 p-6 text-sm text-indigo-700">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-base font-semibold text-indigo-600">Ещё {filtered.length - visible.length} вопросов ждут в Pro</p>
+                      <p>Полный каталог, фильтры по компаниям и подборки задач станут доступны сразу после оформления.</p>
+                    </div>
+                    <Button type="primary" className="rounded-full bg-indigo-500 !px-6" onClick={handleShowMore}>
+                      Оформить Pro
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="rounded-full border border-slate-300 px-3 py-1 disabled:opacity-40"
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="rounded-full border border-slate-300 px-3 py-1 disabled:opacity-40"
-                  >
-                    →
-                  </button>
-                </div>
-              </div>
+              )}
 
-              <button
-                type="button"
+              <Button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="mt-2 self-end rounded-full border border-slate-300 px-4 py-2 text-xs font-medium text-slate-600 hover:border-slate-400"
+                className="self-end rounded-full border-slate-300"
               >
                 Наверх
-              </button>
+              </Button>
             </div>
 
             <aside className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Популярные компании</h2>
-                <span className="text-xs text-slate-400">Pro</span>
+                <Tag icon={<LockFilled />} color="purple" className="px-2 py-1 text-xs">
+                  Pro
+                </Tag>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {popularCompanies.map(([company]) => (
-                  <button
-                    key={company}
-                    type="button"
-                    onClick={() => handleCompanyClick()}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:border-slate-300"
-                  >
-                    {company}
-                  </button>
-                ))}
+              <p className="text-sm text-slate-500">Смотрим, какие бренды чаще упоминают такие вопросы на интервью.</p>
+              <div className="flex flex-col gap-3">
+                {popularCompanies.map(([company, mentions], index) => {
+                  const palette = companyPalette[index % companyPalette.length];
+                  return (
+                    <button
+                      key={company}
+                      type="button"
+                      onClick={handleCompanyClick}
+                      className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          size={48}
+                          style={{
+                            background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {company
+                            .split(' ')
+                            .map((part) => part[0])
+                            .join('')
+                            .slice(0, 2)
+                            .toUpperCase()}
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold text-slate-900 transition group-hover:text-indigo-600">{company}</span>
+                          <span className="text-xs text-slate-400">≈ {formatNumber(mentions)} упоминаний за 4 недели</span>
+                        </div>
+                      </div>
+                      <Tag icon={<LockFilled />} color="purple">
+                        Pro
+                      </Tag>
+                    </button>
+                  );
+                })}
               </div>
               <div className="rounded-2xl bg-slate-50 p-4 text-xs text-slate-500">
-                Демо-режим: фильтрация по компаниям будет доступна в Pro. Пока показываем топ-бренды в открытом списке.
+                В подписке появятся фильтры по брендам, графики трендов и подборки вопросов по каждому работодателю.
               </div>
             </aside>
           </div>
-
-          {lockMessage && (
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-700 shadow-sm">
-              <div className="flex flex-col gap-2">
-                <strong className="text-base text-slate-900">Доступно в Pro</strong>
-                <p>{lockMessage}</p>
-                <div className="flex gap-3">
-                  <Link
-                    href="/pro"
-                    className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-                  >
-                    Посмотреть тариф
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => setLockMessage(null)}
-                    className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:border-slate-400"
-                  >
-                    Понятно
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </section>
       </div>
 
       <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
         Горячая клавиша «/» мгновенно фокусирует поиск по вопросам.
       </div>
+
+      <Modal
+        open={!!proPrompt}
+        title={proPrompt?.title}
+        onCancel={() => setProPrompt(null)}
+        footer={[
+          <Button key="pro" type="primary" className="rounded-full bg-indigo-500" href="/pro">
+            Оформить Pro
+          </Button>,
+          <Button key="close" onClick={() => setProPrompt(null)} className="rounded-full border-slate-300">
+            Понятно
+          </Button>,
+        ]}
+      >
+        <p className="text-sm text-slate-600">{proPrompt?.description}</p>
+      </Modal>
     </div>
   );
 }

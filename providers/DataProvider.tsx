@@ -42,6 +42,7 @@ const normalizeBundle = (
     followUps: q.followUps ?? [],
     companies: q.companies ?? [],
     weeklyMentions: q.weeklyMentions ?? [],
+    answerVariants: q.answerVariants ?? [],
   }));
   const normalizedCompanies = companies && companies.length > 0 ? companies : Array.from(
     new Set(sanitizedQuestions.flatMap((q) => q.companies)),
@@ -50,6 +51,7 @@ const normalizeBundle = (
     roles: computeRoles(sanitizedQuestions),
     questions: sanitizedQuestions,
     companies: normalizedCompanies,
+    videoHighlights: [],
   };
 };
 
@@ -64,7 +66,14 @@ const readInitialState = () => {
       const parsed = JSON.parse(stored) as { bundle: DataBundle; timestamp: string };
       if (parsed?.bundle?.questions?.length) {
         return {
-          bundle: parsed.bundle,
+          bundle: {
+            ...parsed.bundle,
+            videoHighlights: parsed.bundle.videoHighlights ?? [],
+            questions: parsed.bundle.questions.map((question) => ({
+              ...question,
+              answerVariants: question.answerVariants ?? [],
+            })),
+          },
           isCustom: true,
           lastUpdated: parsed.timestamp ? new Date(parsed.timestamp) : new Date(),
         };
