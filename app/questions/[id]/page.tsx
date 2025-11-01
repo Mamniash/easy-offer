@@ -245,7 +245,7 @@ export default function QuestionPage() {
                                 <Tag color={sourceMeta[variant.source].color}>{sourceMeta[variant.source].label}</Tag>
                                 <Text strong>{variant.title}</Text>
                               </Space>
-                              <Text type="secondary">{variant.description}</Text>
+                              <Text type="secondary">{variant.summary}</Text>
                               <Space size={8}>
                                 <LinkOutlined />
                                 <Text type="secondary">{variant.url}</Text>
@@ -300,7 +300,7 @@ export default function QuestionPage() {
                             <PlayCircleFilled style={{ fontSize: 24, color: '#6366f1' }} />
                             <Space direction="vertical" size={0}>
                               <Text strong>{variant.title}</Text>
-                              <Text type="secondary">{variant.description}</Text>
+                              <Text type="secondary">{variant.summary}</Text>
                             </Space>
                           </Space>
                         </Card>

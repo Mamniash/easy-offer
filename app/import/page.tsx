@@ -12,13 +12,11 @@ import {
   message,
 } from 'antd';
 import type { RcFile } from 'antd/es/upload/interface';
+import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
 
 import { useDataContext } from '@/providers/DataProvider';
 import type { AnswerVariant, QuestionRecord } from '@/types';
-
-const { Title, Paragraph, Text } = Typography;
-const { Dragger } = Upload;
 
 const { Title, Paragraph, Text } = Typography;
 const { Dragger } = Upload;
