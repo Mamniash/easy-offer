@@ -15,7 +15,10 @@ import type { RcFile } from 'antd/es/upload/interface';
 import { ChangeEvent, useState } from 'react';
 
 import { useDataContext } from '@/providers/DataProvider';
-import type { QuestionRecord } from '@/types';
+import type { AnswerVariant, QuestionRecord } from '@/types';
+
+const { Title, Paragraph, Text } = Typography;
+const { Dragger } = Upload;
 
 const { Title, Paragraph, Text } = Typography;
 const { Dragger } = Upload;
@@ -48,6 +51,68 @@ const parseWeeklyMentions = (value: unknown): number[] => {
   return raw.map((item) => parseNumber(item));
 };
 
+const parseAnswerVariant = (
+  input: Partial<AnswerVariant>,
+  fallbackIndex: number,
+): AnswerVariant | null => {
+  if (!input.title && !input.url) {
+    return null;
+  }
+
+  const allowedSources: AnswerVariant['source'][] = ['youtube', 'article', 'podcast', 'blog'];
+  const source = allowedSources.includes(input.source as AnswerVariant['source'])
+    ? (input.source as AnswerVariant['source'])
+    : 'article';
+
+  return {
+    id: input.id ?? `variant-${fallbackIndex}`,
+    source,
+    title: input.title ?? 'Альтернативный ответ',
+    contributor: input.contributor ?? 'community',
+    summary: input.summary ?? '',
+    url: input.url ?? '#',
+    timecode: input.timecode,
+    publishedAt: input.publishedAt ?? new Date().toISOString(),
+  };
+};
+
+const parseAnswerVariants = (value: unknown): AnswerVariant[] => {
+  if (!value) return [];
+
+  const normalize = (entry: unknown): Partial<AnswerVariant> | null => {
+    if (typeof entry === 'string') {
+      try {
+        const parsed = JSON.parse(entry);
+        return typeof parsed === 'object' && parsed ? (parsed as Partial<AnswerVariant>) : null;
+      } catch {
+        return null;
+      }
+    }
+    if (typeof entry === 'object' && entry) {
+      return entry as Partial<AnswerVariant>;
+    }
+    return null;
+  };
+
+  const items = Array.isArray(value)
+    ? value
+    : typeof value === 'string'
+    ? (() => {
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      })()
+    : [];
+
+  return items
+    .map(normalize)
+    .map((entry, index) => (entry ? parseAnswerVariant(entry, index) : null))
+    .filter((variant): variant is AnswerVariant => Boolean(variant));
+};
+
 const toQuestionRecord = (input: Partial<QuestionRecord>): QuestionRecord | null => {
   if (!input.roleSlug || !input.roleName || !input.category || !input.title) {
     return null;
@@ -74,6 +139,7 @@ const toQuestionRecord = (input: Partial<QuestionRecord>): QuestionRecord | null
     chance: parseNumber(input.chance ?? input.frequencyScore ?? 0),
     companies: parseList(input.companies),
     weeklyMentions: input.weeklyMentions ? parseWeeklyMentions(input.weeklyMentions) : Array(8).fill(0),
+    answerVariants: parseAnswerVariants(input.answerVariants),
   };
 };
 

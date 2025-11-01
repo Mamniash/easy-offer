@@ -1,31 +1,15 @@
-import 'antd/dist/reset.css';
+'use client';
 
 import { Layout, Menu, Space, Typography } from 'antd';
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-
-import { DataProvider } from '@/providers/DataProvider';
-import { FreeAccessProvider } from '@/providers/FreeAccessProvider';
-import AppShell from '@/components/AppShell';
-
-import './globals.css';
+import Link from 'next/link';
+import type { PropsWithChildren } from 'react';
 
 const { Header, Content, Footer } = Layout;
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-export const metadata: Metadata = {
-  title: 'easyOffer demo',
-  description:
-    'Демо-платформа вопросов на собеседовании: роли, частоты, краткие ответы и Pro-гейтинг.',
-};
+const navigationItems = [
+  { key: 'landing', label: <Link href="/landing">Лендинг</Link> },
+  { key: 'pro', label: <Link href="/pro">Стать Pro</Link> },
+];
 
 const Navigation = () => (
   <Header
@@ -78,10 +62,7 @@ const Navigation = () => (
       </Link>
       <Menu
         mode="horizontal"
-        items={[
-          { key: 'landing', label: <Link href="/landing">Лендинг</Link> },
-          { key: 'pro', label: <Link href="/pro">Стать Pro</Link> },
-        ]}
+        items={navigationItems}
         style={{
           borderBottom: 'none',
           background: 'transparent',
@@ -121,27 +102,12 @@ const AppFooter = () => (
   </Footer>
 );
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="ru">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
-        style={{ background: '#f5f5f5', color: '#1f1f1f' }}
-      >
-        <DataProvider>
-          <FreeAccessProvider>
-            <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
-              <Navigation />
-              <Content style={{ flex: 1 }}>{children}</Content>
-              <AppFooter />
-            </Layout>
-          </FreeAccessProvider>
-        </DataProvider>
-      </body>
-    </html>
-  );
-}
+const AppShell = ({ children }: PropsWithChildren) => (
+  <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+    <Navigation />
+    <Content style={{ flex: 1 }}>{children}</Content>
+    <AppFooter />
+  </Layout>
+);
+
+export default AppShell;
