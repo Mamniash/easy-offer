@@ -1,6 +1,6 @@
 'use client';
 
-import { LockFilled, PlayCircleFilled, StarFilled } from '@ant-design/icons';
+import { CheckCircleFilled, LockFilled, PlayCircleFilled } from '@ant-design/icons';
 import type { InputRef } from 'antd/es/input';
 import {
   Avatar,
@@ -9,8 +9,8 @@ import {
   Card,
   Col,
   Input,
+  List,
   Modal,
-  Progress,
   Row,
   Segmented,
   Select,
@@ -190,11 +190,17 @@ export default function RolePage() {
       .slice(0, 12);
   }, [questions]);
 
-  const navSections = [
-    { label: 'Вопросы', active: true },
-    { label: 'Задачи', active: false },
-    { label: 'Требования', active: false },
-  ];
+const navSections = [
+  { label: 'Вопросы', active: true },
+  { label: 'Задачи', active: false },
+  { label: 'Требования', active: false },
+];
+
+const proMorePerks = [
+  'Полный список вопросов и задач по роли',
+  'Фильтры по компаниям, трендам и уровням',
+  'Подборки follow-up и заметки экспертов',
+];
 
   const handleQuestionClick = (question: QuestionRecord) => {
     if (remaining <= 0) {
@@ -216,13 +222,6 @@ export default function RolePage() {
 
   const handleExport = () => {
     downloadCsv(visible, `${role.slug}-questions-top-${visible.length}.csv`);
-  };
-
-  const handleShowMore = () => {
-    setProPrompt({
-      title: 'Весь каталог в Pro',
-      description: 'Мы показываем первые 50 вопросов, чтобы ты понял структуру. Подпишись на Pro, чтобы открыть полный список и доступ к задачам.',
-    });
   };
 
   return (
@@ -349,71 +348,110 @@ export default function RolePage() {
                           {visible.map((question, index) => {
                             const palette = companyPalette[index % companyPalette.length];
                             const videoCount = question.answerVariants.filter((variant) => variant.source === 'youtube').length;
+                            const totalMentions = question.weeklyMentions.reduce((acc, value) => acc + value, 0);
+                            const frequencyPercent = Math.min(Math.round(question.frequencyScore), 100);
                             return (
                               <Card
                                 key={question.id}
                                 hoverable
-                                style={{ borderRadius: 24 }}
+                                style={{
+                                  borderRadius: 24,
+                                  border: '1px solid #e0e7ff',
+                                  boxShadow: '0 18px 40px rgba(99, 102, 241, 0.08)',
+                                  cursor: 'pointer',
+                                }}
                                 onClick={() => handleQuestionClick(question)}
-                                bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+                                bodyStyle={{ padding: 20 }}
                               >
-                                <Row align="middle" justify="space-between" gutter={[12, 12]}>
-                                  <Col>
-                                    <Space align="center" size={16}>
-                                      <Avatar
-                                        size={48}
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: 24,
+                                    alignItems: 'stretch',
+                                  }}
+                                >
+                                  <Space size={16} align="center">
+                                    <Tooltip title={`Частота ${formatPercent(question.frequencyScore)}`}>
+                                      <div
                                         style={{
-                                          background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
+                                          width: 14,
+                                          height: 64,
+                                          borderRadius: 999,
+                                          background: '#e0e7ff',
+                                          position: 'relative',
+                                          overflow: 'hidden',
                                         }}
-                                        icon={<StarFilled />}
-                                      />
-                                      <Space direction="vertical" size={0}>
-                                        <Text type="secondary" style={{ textTransform: 'uppercase', fontSize: 12 }}>
-                                          Шанс услышать вопрос
-                                        </Text>
-                                        <Title level={4} style={{ margin: 0 }}>
-                                          {formatPercent(question.chance)}
-                                        </Title>
-                                      </Space>
-                                    </Space>
-                                  </Col>
-                                  <Col>
-                                    <Space size={8} wrap>
-                                      <Tag color="geekblue">{LEVEL_LABELS[question.level]}</Tag>
-                                      <Tag color="purple">{TYPE_LABELS[question.type]}</Tag>
-                                      <Tag color="cyan">{STAGE_LABELS[question.interviewStage]}</Tag>
-                                    </Space>
-                                  </Col>
-                                </Row>
-                                <Title level={5} style={{ margin: 0 }}>
-                                  {question.title}
-                                </Title>
-                                <Row align="middle" gutter={[16, 16]}>
-                                  <Col xs={24} md={12}>
-                                    <Space align="center" size={12} style={{ width: '100%' }}>
-                                      <Tooltip title="Частота вопроса в потоке собеседований">
-                                        <Progress
-                                          percent={Math.min(question.frequencyScore, 100)}
-                                          showInfo={false}
-                                          strokeColor="#6366F1"
-                                          style={{ flex: 1 }}
+                                      >
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            bottom: 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: `${frequencyPercent}%`,
+                                            background: `linear-gradient(180deg, ${palette[0]}, ${palette[1]})`,
+                                          }}
                                         />
-                                      </Tooltip>
-                                      <Text strong>Частота {formatPercent(question.frequencyScore)}</Text>
+                                      </div>
+                                    </Tooltip>
+                                    <Space direction="vertical" size={0}>
+                                      <Text type="secondary" style={{ textTransform: 'uppercase', fontSize: 12 }}>
+                                        Шанс услышать
+                                      </Text>
+                                      <Text style={{ fontSize: 28, fontWeight: 600 }}>
+                                        {formatPercent(question.chance)}
+                                      </Text>
                                     </Space>
-                                  </Col>
-                                  <Col xs={24} md={12}>
+                                  </Space>
+
+                                  <div
+                                    style={{
+                                      flex: '1 1 320px',
+                                      minWidth: 240,
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 12,
+                                    }}
+                                  >
+                                    <Text strong style={{ fontSize: 18, lineHeight: 1.3 }}>
+                                      {question.title}
+                                    </Text>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                      <Tag bordered={false} color="geekblue">
+                                        {LEVEL_LABELS[question.level]}
+                                      </Tag>
+                                      <Tag bordered={false} color="purple">
+                                        {TYPE_LABELS[question.type]}
+                                      </Tag>
+                                      <Tag bordered={false} color="cyan">
+                                        {STAGE_LABELS[question.interviewStage]}
+                                      </Tag>
+                                      {question.tags.slice(0, 3).map((tag) => (
+                                        <Tag key={tag} bordered={false}>
+                                          #{tag}
+                                        </Tag>
+                                      ))}
+                                    </div>
+                                    <Text type="secondary">
+                                      Follow-up: {question.followUps.length ? question.followUps.slice(0, 2).join(', ') : 'не указаны'}
+                                    </Text>
+                                  </div>
+
+                                  <Space
+                                    direction="vertical"
+                                    size={8}
+                                    style={{ minWidth: 200, flex: '0 1 200px', marginLeft: 'auto', alignItems: 'flex-end' }}
+                                  >
                                     <Space size={8} align="center">
                                       <PlayCircleFilled style={{ color: '#6366f1' }} />
                                       <Text type="secondary">
                                         {videoCount} видео · {question.answerVariants.length} материалов
                                       </Text>
                                     </Space>
-                                  </Col>
-                                </Row>
+                                    <Text type="secondary">≈ {formatNumber(totalMentions)} упоминаний за 4 недели</Text>
+                                  </Space>
+                                </div>
                               </Card>
                             );
                           })}
@@ -423,27 +461,44 @@ export default function RolePage() {
                       {hasMore && (
                         <Card
                           style={{
-                            borderRadius: 24,
-                            borderStyle: 'dashed',
-                            borderColor: '#c7d2fe',
+                            borderRadius: 28,
+                            border: '1px solid #c7d2fe',
                             background: '#eef2ff',
                           }}
+                          bodyStyle={{ padding: 28 }}
                         >
-                          <Row align="middle" gutter={[16, 16]}>
-                            <Col flex="auto">
-                              <Space direction="vertical" size={4}>
-                                <Title level={5} style={{ margin: 0, color: '#4c1d95' }}>
-                                  Ещё {filtered.length - visible.length} вопросов ждут в Pro
+                          <Row gutter={[24, 24]} align="middle">
+                            <Col xs={24} md={16}>
+                              <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                                <Title level={4} style={{ margin: 0, color: '#312e81' }}>
+                                  Доступно {visible.length} вопросов из {filtered.length}
                                 </Title>
-                                <Text type="secondary">
-                                  Полный каталог, фильтры по компаниям и подборки задач станут доступны сразу после оформления.
+                                <Text type="secondary" style={{ color: '#4338ca' }}>
+                                  Оформи Pro, чтобы раскрыть весь каталог, получить задачи и сохранить любимые карточки.
                                 </Text>
+                                <List
+                                  dataSource={proMorePerks}
+                                  split={false}
+                                  renderItem={(perk) => (
+                                    <List.Item style={{ padding: 0, border: 'none' }}>
+                                      <Space size={12}>
+                                        <CheckCircleFilled style={{ color: '#10b981' }} />
+                                        <Text style={{ color: '#312e81' }}>{perk}</Text>
+                                      </Space>
+                                    </List.Item>
+                                  )}
+                                />
                               </Space>
                             </Col>
-                            <Col>
-                              <Button type="primary" onClick={handleShowMore}>
-                                Оформить Pro
-                              </Button>
+                            <Col xs={24} md={8} style={{ textAlign: 'right' }}>
+                              <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                                <Text type="secondary" style={{ color: '#4338ca' }}>
+                                  Ещё {filtered.length - visible.length} вопросов ждут тебя внутри.
+                                </Text>
+                                <Button type="primary" size="large" href="/pro">
+                                  Оформить Pro
+                                </Button>
+                              </Space>
                             </Col>
                           </Row>
                         </Card>
