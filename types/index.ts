@@ -10,6 +10,17 @@ export interface RoleDefinition {
   category: string;
 }
 
+export interface AnswerVariant {
+  id: string;
+  source: 'youtube' | 'article' | 'podcast' | 'blog';
+  title: string;
+  contributor: string;
+  summary: string;
+  url: string;
+  timecode?: string;
+  publishedAt: string;
+}
+
 export interface QuestionRecord {
   id: string;
   roleSlug: string;
@@ -28,10 +39,24 @@ export interface QuestionRecord {
   chance: number;
   companies: string[];
   weeklyMentions: number[];
+  answerVariants: AnswerVariant[];
+}
+
+export interface VideoHighlight {
+  id: string;
+  roleSlug: string;
+  title: string;
+  level: ExperienceLevel;
+  publishedAt: string;
+  url: string;
+  platform: 'YouTube' | 'Podcast' | 'Webinar';
+  thumbnail: string;
+  interviewers: string;
 }
 
 export interface DataBundle {
   roles: RoleDefinition[];
   questions: QuestionRecord[];
   companies: string[];
+  videoHighlights: VideoHighlight[];
 }

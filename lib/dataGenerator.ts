@@ -1,11 +1,13 @@
 import { allRoles } from '@/lib/roles';
 import type {
+  AnswerVariant,
   DataBundle,
   ExperienceLevel,
   InterviewStage,
   QuestionRecord,
   QuestionType,
   RoleDefinition,
+  VideoHighlight,
 } from '@/types';
 
 interface RoleTopicSeed {
@@ -1520,6 +1522,91 @@ const buildFollowUps = (subject: string): string[] => [
   `Кого подключишь к решению, чтобы ускорить внедрение?`,
 ];
 
+const answerVariantTemplates = [
+  {
+    source: 'youtube' as const,
+    contributor: 'Канал «RealDev Talks»',
+    titleTemplate: 'Реальное интервью: {roleName} отвечает про {subject}',
+    summaryTemplate:
+      'Живой эпизод, где кандидат разбирает {subject} и показывает практический опыт. Таймкод ведёт прямо к ответу.',
+    urlBase: 'https://youtu.be/easyoffer-realdev-',
+  },
+  {
+    source: 'article' as const,
+    contributor: 'Блог easyOffer',
+    titleTemplate: 'Как объяснить {subject}: опыт {roleName}',
+    summaryTemplate:
+      'Подробный разбор от выпускника easyOffer Academy: структурированный ответ и подсказки, как донести мысль.',
+    urlBase: 'https://easyoffer.blog/demo-',
+  },
+  {
+    source: 'podcast' as const,
+    contributor: 'Подкаст «Offer Point»',
+    titleTemplate: 'Подкаст: обсуждаем {subject} с {roleName}',
+    summaryTemplate:
+      'Фрагмент выпуска о подготовке к интервью: обсуждаем, какие акценты выделить и как держать темп ответа.',
+    urlBase: 'https://podcast.easyoffer.fm/episode-',
+  },
+  {
+    source: 'youtube' as const,
+    contributor: 'YouTube-канал «Карьера в IT»',
+    titleTemplate: 'Публичное собеседование: вопрос про {subject}',
+    summaryTemplate:
+      'Публичная запись интервью с кандидатами уровня {level}. Отличный пример живого диалога и уточняющих вопросов.',
+    urlBase: 'https://youtu.be/easyoffer-public-',
+  },
+];
+
+const toTimecode = (secondsTotal: number) => {
+  const minutes = Math.floor(secondsTotal / 60)
+    .toString()
+    .padStart(2, '0');
+  const seconds = Math.floor(secondsTotal % 60)
+    .toString()
+    .padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
+
+const levelDisplay: Record<ExperienceLevel, string> = {
+  junior: 'Junior',
+  middle: 'Middle',
+  senior: 'Senior',
+};
+
+const buildAnswerVariants = (
+  role: RoleDefinition,
+  level: ExperienceLevel,
+  subject: string,
+  focus: string,
+  topicIndex: number,
+  random: SeededRandom,
+  id: string,
+): AnswerVariant[] => {
+  const publishYear = 2023 + ((topicIndex + subject.length) % 3);
+  return answerVariantTemplates.map((template, index) => {
+    const baseSeconds = 360 + Math.round(random.next() * 540);
+    const month = ((topicIndex + index) % 12) + 1;
+    const day = 1 + Math.floor(random.next() * 20);
+    const publishedAt = `${publishYear}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    return {
+      id: `${id}-variant-${index}`,
+      source: template.source,
+      contributor: template.contributor,
+      title: template.titleTemplate
+        .replace('{roleName}', role.name)
+        .replace('{subject}', subject)
+        .replace('{level}', levelDisplay[level]),
+      summary: template.summaryTemplate
+        .replace('{subject}', subject)
+        .replace('{focus}', focus)
+        .replace('{level}', levelDisplay[level]),
+      url: `${template.urlBase}${role.slug}-${topicIndex}-${index}`,
+      timecode: template.source === 'youtube' ? toTimecode(baseSeconds) : undefined,
+      publishedAt,
+    } satisfies AnswerVariant;
+  });
+};
+
 const pickCompanies = (random: SeededRandom): string[] => {
   const count = 3 + Math.floor(random.next() * 4);
   const selected: string[] = [];
@@ -1552,6 +1639,56 @@ const levels: ExperienceLevel[] = ['junior', 'middle', 'senior'];
 
 const interviewStages: InterviewStage[] = ['screening', 'technical', 'on_site', 'take_home'];
 
+const videoGradientPalette = [
+  'from-indigo-500 to-violet-500',
+  'from-amber-500 to-orange-600',
+  'from-emerald-500 to-cyan-500',
+  'from-sky-500 to-blue-600',
+  'from-rose-500 to-pink-600',
+];
+
+const videoTemplates = [
+  {
+    prefix: 'Реальное собеседование',
+    platform: 'YouTube' as const,
+    interviewers: 'Канал «RealDev Talks»',
+    urlBase: 'https://youtu.be/easyoffer-session-',
+  },
+  {
+    prefix: 'Публичное интервью',
+    platform: 'YouTube' as const,
+    interviewers: 'Garpix career days',
+    urlBase: 'https://youtu.be/easyoffer-garpix-',
+  },
+  {
+    prefix: 'Разбор от HR-партнёров',
+    platform: 'Webinar' as const,
+    interviewers: 'ProductStar webinar',
+    urlBase: 'https://webinar.easyoffer.ru/session-',
+  },
+];
+
+const buildVideoHighlights = (roles: RoleDefinition[]): VideoHighlight[] => {
+  return roles.flatMap((role, roleIndex) =>
+    videoTemplates.map((template, templateIndex) => {
+      const level = levels[(roleIndex + templateIndex) % levels.length];
+      const month = ((roleIndex + templateIndex) % 12) + 1;
+      const year = 2024 + ((roleIndex + templateIndex) % 2);
+      return {
+        id: `${role.slug}-video-${templateIndex}`,
+        roleSlug: role.slug,
+        title: `${template.prefix} ${role.name}`,
+        level,
+        publishedAt: `${year}-${month.toString().padStart(2, '0')}-01`,
+        url: `${template.urlBase}${role.slug}-${templateIndex}`,
+        platform: template.platform,
+        thumbnail: videoGradientPalette[(roleIndex + templateIndex) % videoGradientPalette.length],
+        interviewers: template.interviewers,
+      } satisfies VideoHighlight;
+    }),
+  );
+};
+
 const ensureInterviewStage = (seed: RoleTopicSeed, index: number): InterviewStage => {
   if (seed.interviewStage) return seed.interviewStage;
   return interviewStages[index % interviewStages.length];
@@ -1575,6 +1712,7 @@ const generateQuestionsForRole = (
       const frequencyScore = frequencyFromRandom(random);
       const chance = chanceFromFrequency(frequencyScore, random);
       const id = `${role.slug}-${topicIndex}-${level}`;
+      const answerVariants = buildAnswerVariants(role, level, topic.subject, topic.focus, topicIndex, random, id);
       questions.push({
         id,
         roleSlug: role.slug,
@@ -1593,6 +1731,7 @@ const generateQuestionsForRole = (
         chance,
         companies,
         weeklyMentions,
+        answerVariants,
       });
     });
   });
@@ -1628,5 +1767,6 @@ export const generateSyntheticBundle = (): DataBundle => {
     roles,
     questions: generatedQuestions,
     companies: companiesCatalog,
+    videoHighlights: buildVideoHighlights(roles),
   };
 };
