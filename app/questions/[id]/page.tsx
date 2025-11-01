@@ -1,7 +1,7 @@
 'use client';
 
 import { LinkOutlined, PlayCircleFilled } from '@ant-design/icons';
-import { Tag, Tooltip } from 'antd';
+import { Breadcrumb, Button, Card, Col, Modal, Row, Space, Tag, Typography } from 'antd';
 import Link from 'next/link';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -9,6 +9,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDataContext } from '@/providers/DataProvider';
 import { useFreeAccess } from '@/providers/FreeAccessProvider';
 import type { AnswerVariant } from '@/types';
+
+const { Title, Text, Paragraph } = Typography;
 
 const levelLabel: Record<string, string> = {
   junior: 'Junior',
@@ -113,234 +115,207 @@ export default function QuestionPage() {
 
   if (locked) {
     return (
-      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
-        <nav className="flex items-center gap-2 text-sm text-slate-500">
-          <Link href="/" className="hover:text-slate-800">
-            Профессии
-          </Link>
-          <span>→</span>
-          <span className="text-slate-700">{role?.name ?? 'Вопрос'}</span>
-        </nav>
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-900">Демо-лимит исчерпан</h1>
-          <p className="mt-3 text-slate-600">
-            В бесплатной версии можно раскрыть до 20 карточек вопросов в сутки. Чтобы продолжить, оформите Pro или
-            вернитесь завтра.
-          </p>
-          <div className="mt-6 flex gap-3">
-            <Link href="/pro" className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
-              Посмотреть тариф
-            </Link>
-            <Link href="/" className="rounded-full border border-slate-300 px-5 py-3 text-sm text-slate-700 hover:border-slate-400">
-              Вернуться к профессиям
-            </Link>
-          </div>
+      <div style={{ background: '#f5f5f5' }}>
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: '80px 24px' }}>
+          <Space direction="vertical" size={24} style={{ width: '100%' }}>
+            <Breadcrumb>
+              <Breadcrumb.Item>
+                <Link href="/">Профессии</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>{role?.name ?? 'Вопрос'}</Breadcrumb.Item>
+            </Breadcrumb>
+            <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <Title level={2} style={{ margin: 0 }}>
+                Демо-лимит исчерпан
+              </Title>
+              <Paragraph>
+                В бесплатной версии можно раскрыть до 20 карточек вопросов в сутки. Чтобы продолжить, оформите Pro или вернитесь
+                завтра.
+              </Paragraph>
+              <Space size="middle" wrap>
+                <Button type="primary" href="/pro">
+                  Посмотреть тариф
+                </Button>
+                <Button href="/">Вернуться к профессиям</Button>
+              </Space>
+            </Card>
+          </Space>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-8">
-      <nav className="flex items-center gap-2 text-sm text-slate-500">
-        <Link href="/" className="hover:text-slate-800">
-          Профессии
-        </Link>
-        <span>→</span>
-        {role ? (
-          <Link href={`/roles/${role.slug}`} className="hover:text-slate-800">
-            {role.name}
-          </Link>
-        ) : (
-          <span className="text-slate-700">Неизвестная роль</span>
-        )}
-        <span>→</span>
-        <span className="text-slate-700">Вопрос</span>
-      </nav>
+    <div style={{ background: '#f5f5f5' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '48px 24px 80px' }}>
+        <Space direction="vertical" size={24} style={{ width: '100%' }}>
+          <Breadcrumb>
+            <Breadcrumb.Item>
+              <Link href="/">Профессии</Link>
+            </Breadcrumb.Item>
+            {role ? (
+              <Breadcrumb.Item>
+                <Link href={`/roles/${role.slug}`}>{role.name}</Link>
+              </Breadcrumb.Item>
+            ) : (
+              <Breadcrumb.Item>Неизвестная роль</Breadcrumb.Item>
+            )}
+            <Breadcrumb.Item>Вопрос</Breadcrumb.Item>
+          </Breadcrumb>
 
-      <header className="flex flex-col gap-3">
-        <p className="text-sm uppercase tracking-wide text-slate-500">Карточка вопроса</p>
-        <h1 className="text-3xl font-semibold text-slate-900">{question.title}</h1>
-        <p className="text-sm text-slate-500">
-          {levelLabel[question.level]} · {typeLabel[question.type]} · {stageLabel[question.interviewStage]}
-        </p>
-      </header>
+          <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <Text type="secondary" style={{ textTransform: 'uppercase', fontSize: 12 }}>
+              Карточка вопроса
+            </Text>
+            <Title level={2} style={{ margin: 0 }}>
+              {question.title}
+            </Title>
+            <Text type="secondary">
+              {levelLabel[question.level]} · {typeLabel[question.type]} · {stageLabel[question.interviewStage]}
+            </Text>
+          </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <section className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          {isLoading ? (
-            <div className="flex flex-col gap-3">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="h-16 animate-pulse rounded-2xl bg-slate-100" />
-              ))}
-            </div>
-          ) : (
-            <>
-              <div className="flex flex-col gap-3">
-                <h2 className="text-lg font-semibold text-slate-900">Формулировка</h2>
-                <p className="text-base text-slate-700">{question.title}</p>
-              </div>
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={16}>
+              <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {isLoading ? (
+                  <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <Card key={index} style={{ borderRadius: 20 }} loading />
+                    ))}
+                  </Space>
+                ) : (
+                  <Space direction="vertical" size={24} style={{ width: '100%' }}>
+                    <Space direction="vertical" size={8}>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Формулировка
+                      </Title>
+                      <Paragraph style={{ margin: 0 }}>{question.title}</Paragraph>
+                    </Space>
 
-              <div className="flex flex-col gap-3">
-                <h2 className="text-lg font-semibold text-slate-900">Краткий ответ</h2>
-                <button
-                  type="button"
-                  onClick={handleToggleAnswer}
-                  className="w-fit rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:border-slate-400"
-                >
-                  {showAnswer ? 'Скрыть краткий ответ' : 'Показать краткий ответ'}
-                </button>
-                {showAnswer && (
-                  <div className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">{question.sampleAnswer}</div>
+                    <Space direction="vertical" size={12}>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Краткий ответ
+                      </Title>
+                      <Button onClick={handleToggleAnswer}>
+                        {showAnswer ? 'Скрыть краткий ответ' : 'Показать краткий ответ'}
+                      </Button>
+                      {showAnswer && (
+                        <Card style={{ borderRadius: 16, background: '#f5f5f5' }}>
+                          <Paragraph style={{ margin: 0 }}>{question.sampleAnswer}</Paragraph>
+                        </Card>
+                      )}
+                    </Space>
+
+                    <Space direction="vertical" size={8}>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Почему спрашивают
+                      </Title>
+                      <Paragraph style={{ margin: 0 }}>{question.why}</Paragraph>
+                    </Space>
+
+                    <Space direction="vertical" size={8}>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Ловушки
+                      </Title>
+                      <Paragraph style={{ margin: 0 }}>{question.pitfalls.length ? question.pitfalls.join(', ') : 'Не указаны'}</Paragraph>
+                    </Space>
+
+                    <Space direction="vertical" size={8}>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Follow-up вопросы
+                      </Title>
+                      <Paragraph style={{ margin: 0 }}>{question.followUps.length ? question.followUps.join(', ') : 'Не указаны'}</Paragraph>
+                    </Space>
+
+                    <Space direction="vertical" size={12}>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Материалы для изучения
+                      </Title>
+                      <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                        {question.answerVariants.map((variant) => (
+                          <Card
+                            key={variant.id}
+                            hoverable
+                            onClick={() => window.open(variant.url, '_blank')}
+                            style={{ borderRadius: 16 }}
+                          >
+                            <Space direction="vertical" size={8}>
+                              <Space align="center" size={8}>
+                                <Tag color={sourceMeta[variant.source].color}>{sourceMeta[variant.source].label}</Tag>
+                                <Text strong>{variant.title}</Text>
+                              </Space>
+                              <Text type="secondary">{variant.description}</Text>
+                              <Space size={8}>
+                                <LinkOutlined />
+                                <Text type="secondary">{variant.url}</Text>
+                              </Space>
+                            </Space>
+                          </Card>
+                        ))}
+                      </Space>
+                    </Space>
+                  </Space>
                 )}
-              </div>
+              </Card>
+            </Col>
+            <Col xs={24} lg={8}>
+              <Space direction="vertical" size={24} style={{ width: '100%' }}>
+                <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <Title level={4} style={{ margin: 0 }}>
+                    Похожие вопросы
+                  </Title>
+                  <Space direction="vertical" size={12}>
+                    {related.map((item) => (
+                      <Card
+                        key={item.id}
+                        hoverable
+                        style={{ borderRadius: 16 }}
+                        onClick={() => handleRelatedClick(item.id)}
+                      >
+                        <Space direction="vertical" size={4}>
+                          <Text strong>{item.title}</Text>
+                          <Text type="secondary">Частота {Math.round(item.frequencyScore)}%</Text>
+                        </Space>
+                      </Card>
+                    ))}
+                  </Space>
+                </Card>
 
-              <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-slate-900">Почему спрашивают</h2>
-                <p className="text-sm text-slate-700">{question.why}</p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-slate-900">Частые ловушки</h2>
-                <ul className="list-disc pl-5 text-sm text-slate-700">
-                  {question.pitfalls.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {question.answerVariants.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  <h2 className="text-lg font-semibold text-slate-900">Как отвечают другие</h2>
-                  <p className="text-sm text-slate-500">
-                    Собрали открытые интервью и материалы, где кандидаты разбирают именно этот вопрос. Таймкоды ведут к ключевым моментам.
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    {question.answerVariants.map((variant) => {
-                      const meta = sourceMeta[variant.source];
-                      const icon = variant.source === 'youtube' ? (
-                        <PlayCircleFilled className="text-lg" />
-                      ) : (
-                        <LinkOutlined className="text-lg" />
-                      );
-                      return (
-                        <a
+                <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <Title level={4} style={{ margin: 0 }}>
+                    Видео-ответы
+                  </Title>
+                  <Space direction="vertical" size={12}>
+                    {question.answerVariants
+                      .filter((variant) => variant.source === 'youtube')
+                      .map((variant) => (
+                        <Card
                           key={variant.id}
-                          href={variant.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="group flex flex-col gap-2 rounded-2xl border border-slate-200 px-4 py-3 transition hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50"
+                          hoverable
+                          style={{ borderRadius: 16 }}
+                          onClick={() => window.open(variant.url, '_blank')}
                         >
-                          <div className="flex flex-wrap items-start justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-                                {icon}
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-sm font-semibold text-slate-800 group-hover:text-indigo-600">{variant.title}</span>
-                                <span className="text-xs text-slate-500">{variant.contributor} · {variant.publishedAt}</span>
-                              </div>
-                            </div>
-                            <Tag color={meta.color}>{meta.label}</Tag>
-                          </div>
-                          <p className="text-sm text-slate-600">{variant.summary}</p>
-                          {variant.timecode && (
-                            <Tooltip title="Перейти к таймкоду">
-                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-600">
-                                <PlayCircleFilled /> Таймкод {variant.timecode}
-                              </span>
-                            </Tooltip>
-                          )}
-                        </a>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-slate-900">Follow-up</h2>
-                <ul className="flex flex-col gap-2 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
-                  {question.followUps.map((item) => (
-                    <li key={item}>— {item}</li>
-                  ))}
-                </ul>
-              </div>
-            </>
-          )}
-
-          <Link
-            href={role ? `/roles/${role.slug}` : '/'}
-            className="rounded-full border border-slate-300 px-5 py-2 text-center text-sm font-medium text-slate-700 hover:border-slate-400"
-          >
-            Назад к списку
-          </Link>
-        </section>
-
-        <aside className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Где встречается чаще</h2>
-            <div className="flex flex-wrap gap-2">
-              {question.companies.map((company) => (
-                <span key={company} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                  {company}
-                </span>
-              ))}
-            </div>
-            <div className="mt-2 flex flex-col gap-2">
-              {question.weeklyMentions.map((value, index) => (
-                <div key={index} className="flex items-center gap-3 text-xs text-slate-500">
-                  <span className="w-12 text-right">W{index + 1}</span>
-                  <div className="h-2 flex-1 rounded-full bg-slate-100">
-                    <div className="h-2 rounded-full bg-indigo-400" style={{ width: `${Math.min(value * 2, 100)}%` }} />
-                  </div>
-                  <span className="w-6 text-right text-slate-600">{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Похожие вопросы</h2>
-            <div className="flex flex-col gap-2">
-              {related.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleRelatedClick(item.id)}
-                  className="rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm text-slate-700 hover:border-slate-300"
-                >
-                  {item.title}
-                </button>
-              ))}
-            </div>
-          </div>
-        </aside>
+                          <Space align="center" size={12}>
+                            <PlayCircleFilled style={{ fontSize: 24, color: '#6366f1' }} />
+                            <Space direction="vertical" size={0}>
+                              <Text strong>{variant.title}</Text>
+                              <Text type="secondary">{variant.description}</Text>
+                            </Space>
+                          </Space>
+                        </Card>
+                      ))}
+                  </Space>
+                </Card>
+              </Space>
+            </Col>
+          </Row>
+        </Space>
       </div>
 
-      {lockMessage && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-700 shadow-sm">
-          <div className="flex flex-col gap-2">
-            <strong className="text-base text-slate-900">Доступно в Pro</strong>
-            <p>{lockMessage}</p>
-            <div className="flex gap-3">
-              <Link
-                href="/pro"
-                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-              >
-                Посмотреть тариф
-              </Link>
-              <button
-                type="button"
-                onClick={() => setLockMessage(null)}
-                className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:border-slate-400"
-              >
-                Понятно
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal open={!!lockMessage} onCancel={() => setLockMessage(null)} footer={null}>
+        <Paragraph>{lockMessage}</Paragraph>
+      </Modal>
     </div>
   );
 }

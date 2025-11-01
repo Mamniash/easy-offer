@@ -1,6 +1,8 @@
 'use client';
 
-import Link from 'next/link';
+import { Button, Card, Col, List, Row, Space, Typography } from 'antd';
+
+const { Title, Paragraph, Text } = Typography;
 
 const steps = [
   {
@@ -35,72 +37,102 @@ const proPerks = [
 
 export default function LandingPage() {
   return (
-    <div className="bg-gradient-to-b from-slate-50 via-white to-slate-100">
-      <section className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-16 text-center">
-        <p className="text-sm uppercase tracking-widest text-slate-500">easyOffer demo</p>
-        <h1 className="text-4xl font-semibold text-slate-900 sm:text-5xl">
-          Получить оффер быстрее: актуальные вопросы собеседований по твоей специальности
-        </h1>
-        <p className="mx-auto max-w-3xl text-lg text-slate-600">
-          Мы собрали десятки IT-ролей, частотность вопросов и краткие ответы, чтобы подготовка стала
-          точечной. Демо ограничено, но уже помогает сфокусироваться на том, что действительно спрашивают.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="rounded-full bg-slate-900 px-6 py-3 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
-          >
-            Перейти к профессиям
-          </Link>
-          <Link href="/pro" className="rounded-full border border-slate-300 px-6 py-3 text-base font-semibold text-slate-700 hover:border-slate-400">
-            Стать Pro
-          </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-12">
-        <div className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm sm:grid-cols-2">
-          {steps.map((step) => (
-            <div key={step.title} className="flex flex-col gap-2 text-left">
-              <h3 className="text-lg font-semibold text-slate-800">{step.title}</h3>
-              <p className="text-slate-600">{step.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-20">
-        <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <div className="grid gap-6 divide-y divide-slate-200 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-            <div className="flex flex-col gap-4 p-8">
-              <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Free</p>
-              <h3 className="text-2xl font-semibold text-slate-900">Для быстрого старта</h3>
-              <ul className="flex flex-col gap-2 text-slate-600">
-                {freePerks.map((perk) => (
-                  <li key={perk} className="flex items-start gap-2">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-slate-400" />
-                    <span>{perk}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm text-slate-500">Никаких карт, просто попробуй демо.</p>
-            </div>
-            <div className="flex flex-col gap-4 p-8">
-              <p className="text-sm font-semibold uppercase tracking-wide text-indigo-500">Pro (скоро)</p>
-              <h3 className="text-2xl font-semibold text-slate-900">Когда готов расшириться</h3>
-              <ul className="flex flex-col gap-2 text-slate-600">
-                {proPerks.map((perk) => (
-                  <li key={perk} className="flex items-start gap-2">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                    <span>{perk}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm text-slate-500">Мы предупредим, как только полнофункциональный Pro станет доступен.</p>
-            </div>
+    <div style={{ background: '#f5f5f5' }}>
+      <Space direction="vertical" size={64} style={{ width: '100%' }}>
+        <section
+          style={{
+            background: '#ffffff',
+            padding: '96px 0 80px',
+          }}
+        >
+          <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+            <Space direction="vertical" size={24} style={{ width: '100%' }}>
+              <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                easyOffer demo
+              </Text>
+              <Title level={1} style={{ margin: 0 }}>
+                Получить оффер быстрее: актуальные вопросы собеседований по твоей специальности
+              </Title>
+              <Paragraph style={{ fontSize: 18, color: '#595959', margin: 0 }}>
+                Мы собрали десятки IT-ролей, частотность вопросов и краткие ответы, чтобы подготовка стала точечной. Демо
+                ограничено, но уже помогает сфокусироваться на том, что действительно спрашивают.
+              </Paragraph>
+              <Space size="middle" wrap style={{ justifyContent: 'center' }}>
+                <Button type="primary" size="large" href="/">
+                  Перейти к профессиям
+                </Button>
+                <Button type="default" size="large" href="/pro">
+                  Стать Pro
+                </Button>
+              </Space>
+            </Space>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px' }}>
+          <Card style={{ borderRadius: 24 }} bodyStyle={{ padding: 32 }}>
+            <Row gutter={[24, 24]}>
+              {steps.map((step) => (
+                <Col key={step.title} xs={24} sm={12}>
+                  <Space direction="vertical" size={8}>
+                    <Title level={4} style={{ margin: 0 }}>
+                      {step.title}
+                    </Title>
+                    <Paragraph style={{ margin: 0, color: '#595959' }}>{step.description}</Paragraph>
+                  </Space>
+                </Col>
+              ))}
+            </Row>
+          </Card>
+        </section>
+
+        <section style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px 80px' }}>
+          <Card style={{ borderRadius: 24 }} bodyStyle={{ padding: 0 }}>
+            <Row gutter={0}>
+              <Col xs={24} sm={12} style={{ borderRight: '1px solid #f0f0f0' }}>
+                <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1 }}>
+                    Free
+                  </Text>
+                  <Title level={3} style={{ margin: 0 }}>
+                    Для быстрого старта
+                  </Title>
+                  <List
+                    dataSource={freePerks}
+                    renderItem={(perk) => (
+                      <List.Item style={{ padding: '4px 0' }}>
+                        <Text>{perk}</Text>
+                      </List.Item>
+                    )}
+                  />
+                  <Text type="secondary">Никаких карт, просто попробуй демо.</Text>
+                </div>
+              </Col>
+              <Col xs={24} sm={12}>
+                <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1, color: '#6366f1' }}>
+                    Pro (скоро)
+                  </Text>
+                  <Title level={3} style={{ margin: 0 }}>
+                    Когда готов расшириться
+                  </Title>
+                  <List
+                    dataSource={proPerks}
+                    renderItem={(perk) => (
+                      <List.Item style={{ padding: '4px 0' }}>
+                        <Text>{perk}</Text>
+                      </List.Item>
+                    )}
+                  />
+                  <Text type="secondary">
+                    Мы предупредим, как только полнофункциональный Pro станет доступен.
+                  </Text>
+                </div>
+              </Col>
+            </Row>
+          </Card>
+        </section>
+      </Space>
     </div>
   );
 }
