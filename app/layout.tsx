@@ -1,5 +1,6 @@
 import 'antd/dist/reset.css';
 
+import { Layout, Menu, Space, Typography } from 'antd';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { FreeAccessProvider } from '@/providers/FreeAccessProvider';
 
 import './globals.css';
 
+const { Header, Content, Footer } = Layout;
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -26,38 +28,97 @@ export const metadata: Metadata = {
 };
 
 const Navigation = () => (
-  <header className="border-b border-slate-200 bg-white/95 backdrop-blur">
-    <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-      <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-slate-900">
-        <span className="rounded-full bg-slate-900 px-3 py-1 text-sm font-bold uppercase text-white">demo</span>
+  <Header
+    style={{
+      background: '#ffffff',
+      borderBottom: '1px solid #f0f0f0',
+      position: 'sticky',
+      top: 0,
+      zIndex: 10,
+      padding: '0 24px',
+      height: 'auto',
+    }}
+  >
+    <div
+      style={{
+        margin: '0 auto',
+        maxWidth: 1200,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '16px 0',
+      }}
+    >
+      <Link
+        href="/"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          fontSize: 18,
+          fontWeight: 600,
+          color: '#1f1f1f',
+        }}
+      >
+        <span
+          style={{
+            background: '#1f1f1f',
+            color: '#ffffff',
+            borderRadius: 999,
+            padding: '4px 12px',
+            textTransform: 'uppercase',
+            fontSize: 12,
+            letterSpacing: 1.2,
+          }}
+        >
+          demo
+        </span>
         easyOffer
       </Link>
-      <nav className="flex items-center gap-4 text-sm font-medium text-slate-600">
-        <Link href="/landing" className="transition hover:text-slate-900">
-          Лендинг
-        </Link>
-        <Link href="/pro" className="transition hover:text-slate-900">
-          Стать Pro
-        </Link>
-      </nav>
+      <Menu
+        mode="horizontal"
+        items={[
+          { key: 'landing', label: <Link href="/landing">Лендинг</Link> },
+          { key: 'pro', label: <Link href="/pro">Стать Pro</Link> },
+        ]}
+        style={{
+          borderBottom: 'none',
+          background: 'transparent',
+          fontWeight: 500,
+        }}
+      />
     </div>
-  </header>
+  </Header>
 );
 
-const Footer = () => (
-  <footer className="border-t border-slate-200 bg-white">
-    <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-      <p>© {new Date().getFullYear()} easyOffer demo. Все данные синтетические.</p>
-      <div className="flex items-center gap-4">
-        <Link href="/policy" className="hover:text-slate-800">
-          Policy
-        </Link>
-        <Link href="/terms" className="hover:text-slate-800">
-          Terms
-        </Link>
-      </div>
+const AppFooter = () => (
+  <Footer
+    style={{
+      background: '#ffffff',
+      borderTop: '1px solid #f0f0f0',
+      padding: '24px 24px',
+    }}
+  >
+    <div
+      style={{
+        margin: '0 auto',
+        maxWidth: 1200,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+      }}
+    >
+      <Typography.Text type="secondary">
+        © {new Date().getFullYear()} easyOffer demo. Все данные синтетические.
+      </Typography.Text>
+      <Space size="large">
+        <Link href="/policy">Policy</Link>
+        <Link href="/terms">Terms</Link>
+      </Space>
     </div>
-  </footer>
+  </Footer>
 );
 
 export default function RootLayout({
@@ -67,14 +128,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-slate-50 font-sans text-slate-900`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        style={{ background: '#f5f5f5', color: '#1f1f1f' }}
+      >
         <DataProvider>
           <FreeAccessProvider>
-            <div className="flex min-h-screen flex-col">
+            <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
               <Navigation />
-              <main className="flex-1 bg-slate-50">{children}</main>
-              <Footer />
-            </div>
+              <Content style={{ flex: 1 }}>{children}</Content>
+              <AppFooter />
+            </Layout>
           </FreeAccessProvider>
         </DataProvider>
       </body>

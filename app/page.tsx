@@ -1,27 +1,54 @@
 'use client';
 
 import { ArrowRightOutlined, LockFilled, PlayCircleFilled } from '@ant-design/icons';
-import { Button, Card, Carousel, Tag, Tooltip } from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Carousel,
+  Col,
+  Divider,
+  List,
+  Progress,
+  Row,
+  Space,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
 import { roleGroups } from '@/lib/roles';
 import { useDataContext } from '@/providers/DataProvider';
 
-const gradientBackgrounds = [
-  'from-indigo-500/90 via-purple-500/80 to-slate-900/90',
-  'from-sky-500/80 via-cyan-500/80 to-blue-600/90',
-  'from-emerald-500/80 via-teal-500/80 to-slate-900/90',
-];
-
-const previewGradients = [
-  'from-indigo-500 to-purple-500',
-  'from-sky-500 to-blue-600',
-  'from-emerald-500 to-teal-500',
-];
+const { Title, Paragraph, Text } = Typography;
 
 const statFormatter = (value: number) =>
   new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Math.round(value));
+
+const gradients = [
+  'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
+  'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
+  'linear-gradient(135deg, #059669 0%, #0f766e 100%)',
+];
+
+const companyGradients = [
+  'linear-gradient(135deg, #4338ca 0%, #7c3aed 100%)',
+  'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+  'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+  'linear-gradient(135deg, #14b8a6 0%, #0f766e 100%)',
+  'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+  'linear-gradient(135deg, #f472b6 0%, #db2777 100%)',
+];
+
+const videoBackgrounds: Record<string, string> = {
+  'from-indigo-500 to-violet-500': 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+  'from-amber-500 to-orange-600': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+  'from-emerald-500 to-cyan-500': 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+  'from-sky-500 to-blue-600': 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
+  'from-rose-500 to-pink-600': 'linear-gradient(135deg, #f43f5e 0%, #db2777 100%)',
+};
 
 const RoleCard = ({
   slug,
@@ -34,20 +61,38 @@ const RoleCard = ({
   category: string;
   index: number;
 }) => {
-  const accent = gradientBackgrounds[index % gradientBackgrounds.length];
+  const background = gradients[index % gradients.length];
   return (
-    <Link href={`/roles/${slug}`} className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-      <div className={`absolute inset-0 bg-gradient-to-br ${accent} opacity-0 transition group-hover:opacity-100`} />
-      <div className="relative flex h-full flex-col gap-4 p-6">
-        <span className="w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">{category}</span>
-        <h3 className="text-xl font-semibold text-slate-900 transition group-hover:text-white">{name}</h3>
-        <p className="text-sm text-slate-500 transition group-hover:text-indigo-50">
-          Популярные вопросы и ответы для интервью на позицию {name}. Частоты, ловушки и видео-разборы.
-        </p>
-        <span className="mt-auto flex items-center gap-2 text-sm font-medium text-slate-600 transition group-hover:text-indigo-50">
-          Перейти к вопросам <ArrowRightOutlined />
-        </span>
-      </div>
+    <Link href={`/roles/${slug}`} style={{ textDecoration: 'none' }}>
+      <Card
+        hoverable
+        style={{ borderRadius: 24, overflow: 'hidden', height: '100%' }}
+        bodyStyle={{
+          padding: 24,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          minHeight: 210,
+          background,
+          color: '#fff',
+        }}
+      >
+        <Tag color="rgba(255,255,255,0.25)" style={{ alignSelf: 'flex-start', color: '#fff' }}>
+          {category}
+        </Tag>
+        <Title level={4} style={{ color: '#fff', margin: 0 }}>
+          {name}
+        </Title>
+        <Paragraph style={{ color: 'rgba(255,255,255,0.75)', margin: 0 }}>
+          Популярные вопросы, краткие ответы и ловушки. Сгруппировали всё, что нужно для подготовки на {name}.
+        </Paragraph>
+        <Space size="small" style={{ marginTop: 'auto', color: '#fff' }}>
+          <Text strong style={{ color: '#fff' }}>
+            Перейти к вопросам
+          </Text>
+          <ArrowRightOutlined />
+        </Space>
+      </Card>
     </Link>
   );
 };
@@ -55,29 +100,39 @@ const RoleCard = ({
 const CompaniesPreview = ({ companies }: { companies: string[] }) => {
   const limited = companies.slice(0, 12);
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-      {limited.map((company, index) => (
-        <div
-          key={company}
-          className="group relative flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-        >
-          <div
-            className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${previewGradients[index % previewGradients.length]} text-sm font-semibold text-white`}
-          >
-            {company
-              .split(' ')
-              .map((part) => part[0])
-              .join('')
-              .slice(0, 2)
-              .toUpperCase()}
-          </div>
-          <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{company}</span>
-          <span className="absolute right-3 top-3 text-xs text-slate-400">
-            <LockFilled />
-          </span>
-        </div>
-      ))}
-    </div>
+    <List
+      grid={{ gutter: 16, column: 6, xs: 2, sm: 3, md: 4, lg: 6 }}
+      dataSource={limited}
+      renderItem={(company, index) => {
+        const initials = company
+          .split(' ')
+          .map((part) => part[0])
+          .join('')
+          .slice(0, 2)
+          .toUpperCase();
+        return (
+          <List.Item>
+              <Card
+                size="small"
+                hoverable
+                style={{ borderRadius: 16, position: 'relative' }}
+                bodyStyle={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16 }}
+              >
+              <Avatar
+                style={{
+                  background: companyGradients[index % companyGradients.length],
+                  fontWeight: 600,
+                }}
+              >
+                {initials}
+              </Avatar>
+              <Text style={{ fontWeight: 500 }}>{company}</Text>
+              <LockFilled style={{ position: 'absolute', right: 12, top: 12, color: '#bfbfbf', fontSize: 12 }} />
+            </Card>
+          </List.Item>
+        );
+      }}
+    />
   );
 };
 
@@ -91,33 +146,42 @@ const QuestionPreview = ({
     chance: number;
   }[];
 }) => (
-  <div className="flex flex-col gap-3">
-    {questions.map((question) => (
-      <div key={question.id} className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h4 className="text-base font-semibold text-slate-900">{question.title}</h4>
-          <div className="flex items-center gap-2">
-            <Tooltip title="Вероятность услышать вопрос при ближайшем интервью">
-              <Tag color="geekblue" className="px-3 py-1 text-sm">
-                Шанс {Math.round(question.chance)}%
-              </Tag>
-            </Tooltip>
-            <Tooltip title="Частота упоминаний в собеседованиях за последние недели">
-              <Tag color="cyan" className="px-3 py-1 text-sm">
-                Частота {Math.round(question.frequencyScore)}%
-              </Tag>
-            </Tooltip>
-          </div>
-        </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
-            style={{ width: `${Math.min(question.frequencyScore, 100)}%` }}
+  <List
+    dataSource={questions}
+    renderItem={(question) => (
+      <List.Item key={question.id}>
+        <Card
+          style={{ width: '100%', borderRadius: 20 }}
+          bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+        >
+          <Row gutter={[16, 16]} align="middle" justify="space-between">
+            <Col flex="auto">
+              <Title level={5} style={{ margin: 0 }}>
+                {question.title}
+              </Title>
+            </Col>
+            <Col>
+              <Space size="small">
+                <Tooltip title="Вероятность услышать вопрос на ближайшем интервью">
+                  <Tag color="geekblue">Шанс {Math.round(question.chance)}%</Tag>
+                </Tooltip>
+                <Tooltip title="Частота упоминаний за последние недели">
+                  <Tag color="cyan">Частота {Math.round(question.frequencyScore)}%</Tag>
+                </Tooltip>
+              </Space>
+            </Col>
+          </Row>
+          <Progress
+            percent={Math.min(question.frequencyScore, 100)}
+            showInfo={false}
+            strokeColor={{ from: '#6366f1', to: '#a855f7' }}
+            strokeWidth={12}
+            style={{ marginBottom: 0 }}
           />
-        </div>
-      </div>
-    ))}
-  </div>
+        </Card>
+      </List.Item>
+    )}
+  />
 );
 
 export default function HomePage() {
@@ -168,203 +232,304 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-20 bg-gradient-to-b from-slate-100 via-white to-slate-100">
-      <section className="relative isolate overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 py-20 text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(79,70,229,0.45),_transparent_60%)]" />
-        <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex max-w-3xl flex-col gap-4">
-              <span className="w-fit rounded-full border border-white/20 px-3 py-1 text-xs font-medium uppercase tracking-widest text-white/80">
-                easyOffer demo · {isCustom ? 'импортированные данные' : 'синтетический набор'}
-              </span>
-              <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
-                Подготовься к собеседованию так, как будто ты уже внутри команды мечты
-              </h1>
-              <p className="text-lg text-white/80">
-                Десятки ролей, частотные вопросы и реальные ответы кандидатов. Мы подсвечиваем, что спрашивают прямо сейчас, чтобы ты фокусировался на важном.
-              </p>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button type="primary" size="large" className="rounded-full bg-white !px-6 !text-slate-900 hover:!bg-slate-100" href="/roles/frontend">
-                  Начать с Frontend
-                </Button>
-                <Button size="large" className="rounded-full border-white/40 !bg-transparent !px-6 text-white hover:!border-white hover:!text-white" href="/pro">
-                  Узнать про Pro
-                </Button>
-              </div>
-            </div>
-            <div className="grid w-full max-w-md grid-cols-2 gap-4 text-left text-white/80">
-              <Card bordered={false} className="!bg-white/10 !backdrop-blur">
-                <p className="text-sm text-white/60">Вопросов в демо</p>
-                <p className="text-3xl font-semibold text-white">{statFormatter(bundle.questions.length)}</p>
-              </Card>
-              <Card bordered={false} className="!bg-white/10 !backdrop-blur">
-                <p className="text-sm text-white/60">Компаний отслеживаем</p>
-                <p className="text-3xl font-semibold text-white">{statFormatter(bundle.companies.length)}</p>
-              </Card>
-              <Card bordered={false} className="!bg-white/10 !backdrop-blur">
-                <p className="text-sm text-white/60">Обновлено</p>
-                <p className="text-3xl font-semibold text-white">{lastUpdated.toLocaleDateString('ru-RU')}</p>
-              </Card>
-              <Card bordered={false} className="!bg-white/10 !backdrop-blur">
-                <p className="text-sm text-white/60">Средняя вероятность</p>
-                <p className="text-3xl font-semibold text-white">
-                  {statFormatter(
-                    bundle.questions.reduce((acc, item) => acc + item.chance, 0) / Math.max(bundle.questions.length, 1),
-                  )}%
-                </p>
-              </Card>
-            </div>
+    <div style={{ background: '#f5f5f5' }}>
+      <Space direction="vertical" size={64} style={{ width: '100%' }}>
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #1f2937 100%)',
+            color: '#fff',
+            padding: '80px 0',
+          }}
+        >
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+            <Row gutter={[48, 32]} align="bottom">
+              <Col xs={24} lg={14}>
+                <Space direction="vertical" size={24} style={{ width: '100%' }}>
+                  <Tag color="rgba(255,255,255,0.25)" style={{ alignSelf: 'flex-start', color: '#fff' }}>
+                    easyOffer demo · {isCustom ? 'импортированные данные' : 'синтетический набор'}
+                  </Tag>
+                  <Title level={1} style={{ color: '#fff', margin: 0 }}>
+                    Подготовься к собеседованию так, как будто ты уже внутри команды мечты
+                  </Title>
+                  <Paragraph style={{ color: 'rgba(255,255,255,0.75)', fontSize: 18 }}>
+                    Десятки ролей, частотные вопросы и реальные ответы кандидатов. Мы подсвечиваем, что спрашивают прямо
+                    сейчас, чтобы ты фокусировался на важном.
+                  </Paragraph>
+                  <Space size="middle" wrap>
+                    <Button type="primary" size="large" href="/roles/frontend">
+                      Начать с Frontend
+                    </Button>
+                    <Button type="default" size="large" href="/pro">
+                      Узнать про Pro
+                    </Button>
+                  </Space>
+                </Space>
+              </Col>
+              <Col xs={24} lg={10}>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
+                      <Space direction="vertical" size={8}>
+                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Вопросов в демо</Text>
+                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
+                          {statFormatter(bundle.questions.length)}
+                        </Title>
+                      </Space>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
+                      <Space direction="vertical" size={8}>
+                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Компаний отслеживаем</Text>
+                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
+                          {statFormatter(bundle.companies.length)}
+                        </Title>
+                      </Space>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
+                      <Space direction="vertical" size={8}>
+                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Обновлено</Text>
+                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
+                          {lastUpdated.toLocaleDateString('ru-RU')}
+                        </Title>
+                      </Space>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
+                      <Space direction="vertical" size={8}>
+                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Средняя вероятность</Text>
+                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
+                          {statFormatter(
+                            bundle.questions.reduce((acc, item) => acc + item.chance, 0) /
+                              Math.max(bundle.questions.length, 1),
+                          )}%
+                        </Title>
+                      </Space>
+                    </Card>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
           </div>
         </div>
-      </section>
 
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
-        <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-          <div className="flex flex-col gap-4">
-            <h2 className="text-3xl font-semibold text-slate-900">Каталог ролей</h2>
-            <p className="text-lg text-slate-600">
-              Выбери профессию и изучи частотные вопросы. Мы ограничили Free-доступ 50 карточками на роль, но показали структуру и силу Pro-тарифа.
-            </p>
-          </div>
-          <Card className="rounded-3xl border-slate-200 shadow-sm">
-            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Что внутри</p>
-            <ul className="mt-3 flex flex-col gap-2 text-sm text-slate-600">
-              <li>— Частоты вопросов и прогноз шанса</li>
-              <li>— Краткие ответы и ловушки</li>
-              <li>— Видео- и текстовые ответы кандидатов</li>
-              <li>— Популярные компании и фильтры (в Pro)</li>
-            </ul>
-          </Card>
-        </div>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <Space direction="vertical" size={40} style={{ width: '100%' }}>
+            <Row gutter={[48, 32]} align="middle">
+              <Col xs={24} lg={16}>
+                <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                  <Title level={2} style={{ margin: 0 }}>
+                    Каталог ролей
+                  </Title>
+                  <Paragraph style={{ fontSize: 18, color: '#595959', margin: 0 }}>
+                    Выбери профессию и изучи частотные вопросы. В демо — до 50 карточек на роль, остальное откроется в Pro.
+                  </Paragraph>
+                </Space>
+              </Col>
+              <Col xs={24} lg={8}>
+                <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}>
+                    Что внутри
+                  </Text>
+                  <ul style={{ paddingLeft: 16, margin: 0, color: '#595959', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <li>Частоты вопросов и прогноз шанса</li>
+                    <li>Краткие ответы и ловушки</li>
+                    <li>Видео- и текстовые ответы кандидатов</li>
+                    <li>Популярные компании и фильтры (в Pro)</li>
+                  </ul>
+                </Card>
+              </Col>
+            </Row>
 
-        {grouped.map((group) => (
-          <section key={group.category} className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-slate-900">{group.category}</h3>
-              <div className="h-px flex-1 rounded bg-slate-200" />
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {group.roles.map((role, index) => (
-                <RoleCard key={role.slug} slug={role.slug} name={role.name} category={group.category} index={index} />
+            <Space direction="vertical" size={32} style={{ width: '100%' }}>
+              {grouped.map((group) => (
+                <Space key={group.category} direction="vertical" size={24} style={{ width: '100%' }}>
+                  <Divider orientation="left" style={{ margin: 0 }}>
+                    <Title level={4} style={{ margin: 0 }}>
+                      {group.category}
+                    </Title>
+                  </Divider>
+                  <Row gutter={[24, 24]}>
+                    {group.roles.map((role, index) => (
+                      <Col key={role.slug} xs={24} sm={12} lg={8}>
+                        <RoleCard slug={role.slug} name={role.name} category={group.category} index={index} />
+                      </Col>
+                    ))}
+                  </Row>
+                </Space>
               ))}
-            </div>
-          </section>
-        ))}
-      </section>
-
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Популярные компании</h2>
-            <p className="text-sm text-slate-500">В демо только предпросмотр. Полные фильтры доступны в Pro.</p>
-          </div>
-          <Button type="default" className="rounded-full border-slate-300" href="/pro">
-            Открыть Pro <ArrowRightOutlined />
-          </Button>
+            </Space>
+          </Space>
         </div>
-        <CompaniesPreview companies={bundle.companies} />
-      </section>
 
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold text-slate-900">Как выглядят вопросы</h2>
-          <p className="text-sm text-slate-500">
-            Мы ранжируем список по частоте, подсвечиваем шанс и даём краткое описание. Пролистай три примера ниже.
-          </p>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <Space direction="vertical" size={24} style={{ width: '100%' }}>
+            <Row align="middle" justify="space-between" gutter={[16, 16]}>
+              <Col>
+                <Space direction="vertical" size={8}>
+                  <Title level={3} style={{ margin: 0 }}>
+                    Популярные компании
+                  </Title>
+                  <Text type="secondary">В демо только предпросмотр. Полные фильтры — в Pro.</Text>
+                </Space>
+              </Col>
+              <Col>
+                <Button type="default" href="/pro">
+                  Открыть Pro <ArrowRightOutlined />
+                </Button>
+              </Col>
+            </Row>
+            <CompaniesPreview companies={bundle.companies} />
+          </Space>
         </div>
-        <QuestionPreview questions={topQuestions} />
-        <Card className="rounded-3xl border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-wide text-indigo-500">Ограничение демо</p>
-              <h3 className="text-xl font-semibold text-slate-900">
+
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <Space direction="vertical" size={24} style={{ width: '100%' }}>
+            <Space direction="vertical" size={8}>
+              <Title level={3} style={{ margin: 0 }}>
+                Как выглядят вопросы
+              </Title>
+              <Text type="secondary">
+                Ранжируем по частоте, подсвечиваем шанс и даём краткое описание. Ниже — шесть примеров.
+              </Text>
+            </Space>
+            <QuestionPreview questions={topQuestions} />
+            <Card
+              style={{
+                borderRadius: 24,
+                background: 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)',
+              }}
+              bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start' }}
+            >
+              <Text strong style={{ textTransform: 'uppercase', color: '#4f46e5', letterSpacing: 1 }}>
+                Ограничение демо
+              </Text>
+              <Title level={4} style={{ margin: 0 }}>
                 Доступно 50 карточек на роль. Остальное откроется в Pro-подписке.
-              </h3>
-            </div>
-            <Button type="primary" className="rounded-full bg-indigo-500 !px-6" href="/pro">
-              Оформить Pro
-            </Button>
-          </div>
-        </Card>
-      </section>
-
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Видео-ответы</h2>
-            <p className="text-sm text-slate-500">Собрали открытые интервью и вебинары. Таймкоды ведут прямо к интересному моменту.</p>
-          </div>
-          <Button type="link" href="/pro">
-            Смотреть всё <ArrowRightOutlined />
-          </Button>
+              </Title>
+              <Button type="primary" href="/pro">
+                Оформить Pro
+              </Button>
+            </Card>
+          </Space>
         </div>
-        <Carousel dots className="rounded-3xl bg-white p-6 shadow-sm">
-          {[0, 1].map((page) => {
-            const chunk = bundle.videoHighlights.slice(page * 3, page * 3 + 3);
-            if (!chunk.length) return null;
-            return (
-              <div key={page} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {chunk.map((video) => (
-                  <Link
-                    key={video.id}
-                    href={video.url}
-                    target="_blank"
-                    className="group relative flex flex-col gap-3 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    <div className={`h-40 w-full bg-gradient-to-br ${video.thumbnail} relative flex items-center justify-center text-white`}>
-                      <PlayCircleFilled className="text-4xl drop-shadow-lg" />
-                    </div>
-                    <div className="flex flex-col gap-2 p-4">
-                      <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
-                        <span>{video.platform}</span>
-                        <span>•</span>
-                        <span>{video.publishedAt}</span>
-                      </div>
-                      <h3 className="text-base font-semibold text-slate-900 group-hover:text-indigo-600">{video.title}</h3>
-                      <p className="text-sm text-slate-500">{video.interviewers} · {video.level}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            );
-          })}
-        </Carousel>
-      </section>
 
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 pb-20">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="rounded-3xl border-slate-200 shadow-sm">
-            <p className="text-sm uppercase tracking-wide text-slate-500">Pro подписка</p>
-            <h3 className="mt-3 text-2xl font-semibold text-slate-900">Разблокируй весь контент</h3>
-            <ul className="mt-4 flex flex-col gap-2 text-sm text-slate-600">
-              {proPerks.map((perk) => (
-                <li key={perk} className="flex items-start gap-2">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                  <span>{perk}</span>
-                </li>
-              ))}
-            </ul>
-            <Button type="primary" className="mt-6 rounded-full bg-indigo-500 !px-6" href="/pro">
-              Оформить Pro
-            </Button>
-          </Card>
-          <Card className="rounded-3xl border-slate-200 shadow-sm">
-            <p className="text-sm uppercase tracking-wide text-slate-500">Документы</p>
-            <h3 className="mt-3 text-2xl font-semibold text-slate-900">Юридическая прозрачность</h3>
-            <p className="mt-2 text-sm text-slate-600">
-              Перед стартом убедись, что понимаешь условия использования и как мы бережно работаем с данными.
-            </p>
-            <div className="mt-4 flex flex-col gap-3 text-sm font-medium text-indigo-600">
-              <Link href="/terms" className="flex items-center gap-2 hover:text-indigo-500">
-                Документ об оферте <ArrowRightOutlined />
-              </Link>
-              <Link href="/policy" className="flex items-center gap-2 hover:text-indigo-500">
-                Политика конфиденциальности <ArrowRightOutlined />
-              </Link>
-            </div>
-          </Card>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <Space direction="vertical" size={24} style={{ width: '100%' }}>
+            <Row align="middle" justify="space-between" gutter={[16, 16]}>
+              <Col>
+                <Space direction="vertical" size={4}>
+                  <Title level={3} style={{ margin: 0 }}>
+                    Видео-ответы
+                  </Title>
+                  <Text type="secondary">Открытые интервью и вебинары. Таймкоды ведут к важным моментам.</Text>
+                </Space>
+              </Col>
+              <Col>
+                <Button type="link" href="/pro">
+                  Смотреть всё <ArrowRightOutlined />
+                </Button>
+              </Col>
+            </Row>
+            <Card style={{ borderRadius: 24 }} bodyStyle={{ padding: 0 }}>
+              <Carousel dots>
+                {[0, 1].map((page) => {
+                  const chunk = bundle.videoHighlights.slice(page * 3, page * 3 + 3);
+                  if (!chunk.length) return null;
+                  return (
+                    <div key={page}>
+                      <Row gutter={[24, 24]} style={{ padding: 32 }}>
+                        {chunk.map((video) => (
+                          <Col key={video.id} xs={24} md={12} lg={8}>
+                            <Link href={video.url} target="_blank" style={{ textDecoration: 'none' }}>
+                              <Card hoverable style={{ borderRadius: 24, height: '100%' }}>
+                                <div
+                                  style={{
+                                    height: 160,
+                                    borderRadius: 16,
+                                    background: videoBackgrounds[video.thumbnail] ?? 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#fff',
+                                    marginBottom: 16,
+                                  }}
+                                >
+                                  <PlayCircleFilled style={{ fontSize: 32 }} />
+                                </div>
+                                <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                                  <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1 }}>
+                                    {video.platform} · {video.publishedAt}
+                                  </Text>
+                                  <Title level={4} style={{ margin: 0 }}>
+                                    {video.title}
+                                  </Title>
+                                  <Text type="secondary">
+                                    {video.interviewers} · {video.level}
+                                  </Text>
+                                </Space>
+                              </Card>
+                            </Link>
+                          </Col>
+                        ))}
+                      </Row>
+                    </div>
+                  );
+                })}
+              </Carousel>
+            </Card>
+          </Space>
         </div>
-      </section>
+
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={12}>
+              <Card style={{ borderRadius: 24, height: '100%' }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1 }}>
+                  Pro подписка
+                </Text>
+                <Title level={3} style={{ margin: 0 }}>
+                  Разблокируй весь контент
+                </Title>
+                <List
+                  dataSource={proPerks}
+                  renderItem={(perk) => (
+                    <List.Item style={{ padding: '4px 0' }}>
+                      <Space>
+                        <span style={{ width: 8, height: 8, background: '#6366f1', borderRadius: '50%' }} />
+                        <Text>{perk}</Text>
+                      </Space>
+                    </List.Item>
+                  )}
+                />
+                <Button type="primary" href="/pro">
+                  Оформить Pro
+                </Button>
+              </Card>
+            </Col>
+            <Col xs={24} lg={12}>
+              <Card style={{ borderRadius: 24, height: '100%' }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1 }}>
+                  Документы
+                </Text>
+                <Title level={3} style={{ margin: 0 }}>
+                  Юридическая прозрачность
+                </Title>
+                <Paragraph style={{ margin: 0, color: '#595959' }}>
+                  Перед стартом убедись, что понимаешь условия использования и как мы бережно работаем с данными.
+                </Paragraph>
+                <Space direction="vertical" size={8}>
+                  <Link href="/terms">Документ об оферте</Link>
+                  <Link href="/policy">Политика конфиденциальности</Link>
+                </Space>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      </Space>
     </div>
   );
 }
