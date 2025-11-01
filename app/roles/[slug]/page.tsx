@@ -68,7 +68,7 @@ const formatPercent = (value: number) => `${Math.round(value)}%`;
 const formatNumber = (value: number) => new Intl.NumberFormat('ru-RU').format(Math.round(value));
 
 const buildCsv = (items: QuestionRecord[]) => {
-  const headers = [
+  const headers: Array<keyof QuestionRecord> = [
     'id',
     'roleSlug',
     'roleName',
@@ -90,12 +90,15 @@ const buildCsv = (items: QuestionRecord[]) => {
   const rows = items.map((item) =>
     headers
       .map((header) => {
-        const value = (item as Record<string, unknown>)[header];
+        const value = item[header];
         if (Array.isArray(value)) {
           return `"${value.join('|').replace(/"/g, '""')}"`;
         }
         if (typeof value === 'string') {
           return `"${value.replace(/"/g, '""')}"`;
+        }
+        if (typeof value === 'number') {
+          return value.toString();
         }
         return value ?? '';
       })
