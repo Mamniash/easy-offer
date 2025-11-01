@@ -20,6 +20,9 @@ import type { AnswerVariant, QuestionRecord } from '@/types';
 const { Title, Paragraph, Text } = Typography;
 const { Dragger } = Upload;
 
+const { Title, Paragraph, Text } = Typography;
+const { Dragger } = Upload;
+
 const parseList = (value: unknown): string[] => {
   if (Array.isArray(value)) return value.map((item) => String(item));
   if (typeof value === 'string') {
