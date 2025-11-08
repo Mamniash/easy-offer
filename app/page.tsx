@@ -19,6 +19,7 @@ import {
 import Link from 'next/link';
 import { useMemo } from 'react';
 
+import { formatDate } from '@/lib/date';
 import { roleGroups } from '@/lib/roles';
 import { useDataContext } from '@/providers/DataProvider';
 
@@ -292,7 +293,7 @@ export default function HomePage() {
                       <Space direction="vertical" size={8}>
                         <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Обновлено</Text>
                         <Title level={2} style={{ color: '#fff', margin: 0 }}>
-                          {lastUpdated.toLocaleDateString('ru-RU')}
+                          {formatDate(lastUpdated)}
                         </Title>
                       </Space>
                     </Card>

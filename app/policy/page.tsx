@@ -2,6 +2,8 @@
 
 import { Card, List, Space, Typography } from 'antd';
 
+import { formatDate } from '@/lib/date';
+
 const { Title, Paragraph, Text } = Typography;
 
 export default function PolicyPage() {
@@ -14,8 +16,8 @@ export default function PolicyPage() {
               Политика конфиденциальности easyOffer
             </Title>
             <Text type="secondary">
-              Версия от {new Date().toLocaleDateString('ru-RU')}. Мы объясняем, какие данные собираем, как используем их и как
-              защищаем вашу приватность.
+              Версия от {formatDate(new Date())}. Мы объясняем, какие данные собираем, как используем их и как защищаем вашу
+              приватность.
             </Text>
           </Card>
 
