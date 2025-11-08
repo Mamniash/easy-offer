@@ -12,9 +12,9 @@ import {
   message,
 } from 'antd';
 import type { RcFile } from 'antd/es/upload/interface';
-import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
 
+import { formatDateTime } from '@/lib/date';
 import { useDataContext } from '@/providers/DataProvider';
 import type { AnswerVariant, QuestionRecord } from '@/types';
 
@@ -279,7 +279,7 @@ export default function ImportPage() {
                     Источник: {isCustom ? 'импорт пользователя' : 'синтетика easyOffer demo'}
                   </Text>
                   <Text type="secondary">Вопросов: {bundle.questions.length}</Text>
-                  <Text type="secondary">Обновлено: {lastUpdated.toLocaleString('ru-RU')}</Text>
+                  <Text type="secondary">Обновлено: {formatDateTime(lastUpdated)}</Text>
                 </Space>
               </Col>
               <Col xs={24} md={12}>

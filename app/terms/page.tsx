@@ -2,6 +2,8 @@
 
 import { Card, List, Space, Typography } from 'antd';
 
+import { formatDate } from '@/lib/date';
+
 const { Title, Paragraph, Text } = Typography;
 
 export default function TermsPage() {
@@ -14,7 +16,7 @@ export default function TermsPage() {
               Публичная оферта сервиса easyOffer
             </Title>
             <Text type="secondary">
-              Версия от {new Date().toLocaleDateString('ru-RU')}. Этот документ описывает условия предоставления доступа к демо и
+              Версия от {formatDate(new Date())}. Этот документ описывает условия предоставления доступа к демо и
               Pro-тарифам платформы подготовки к собеседованиям.
             </Text>
           </Card>
