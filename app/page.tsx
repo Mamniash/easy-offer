@@ -276,18 +276,18 @@ export default function HomePage() {
                   <Row gutter={[12, 12]}>
                     {[{
                       label: 'Основано на',
-                      value: '≈ 3 000',
+                      value: '≈\u00a03\u00a0000',
                       hint: 'реальных собеседований',
                     },
                     {
                       label: 'Разобрали',
-                      value: '300 000+',
+                      value: '300\u00a0000+',
                       hint: 'вопросов и ответов',
                     },
                     {
                       label: 'Следим за',
-                      value: '100+ компаниями',
-                      hint: 'и форматами интервью',
+                      value: '100+\u00a0компаний',
+                      hint: 'и\u00a0форматов интервью',
                     },
                     {
                       label: 'Обновляем',
@@ -305,10 +305,10 @@ export default function HomePage() {
                           bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 6, padding: 16 }}
                         >
                           <Text style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{stat.label}</Text>
-                          <Title level={2} style={{ color: '#fff', margin: 0 }}>
+                          <Title level={2} style={{ color: '#fff', margin: 0, whiteSpace: 'nowrap', letterSpacing: -0.5 }}>
                             {stat.value}
                           </Title>
-                          <Text style={{ color: 'rgba(255,255,255,0.75)' }}>{stat.hint}</Text>
+                          <Text style={{ color: 'rgba(255,255,255,0.75)', whiteSpace: 'nowrap' }}>{stat.hint}</Text>
                         </Card>
                       </Col>
                     ))}
