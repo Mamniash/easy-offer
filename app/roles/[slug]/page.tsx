@@ -190,12 +190,6 @@ export default function RolePage() {
       .slice(0, 12);
   }, [questions]);
 
-const navSections = [
-  { label: 'Вопросы', active: true },
-  { label: 'Задачи', active: false },
-  { label: 'Требования', active: false },
-];
-
 const proMorePerks = [
   'Полный список вопросов и задач по роли',
   'Фильтры по компаниям, трендам и уровням',
@@ -243,19 +237,7 @@ const proMorePerks = [
           </Card>
 
           <Row gutter={[24, 24]}>
-            <Col xs={24} lg={6}>
-              <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {navSections.map((section) => (
-                  <Button key={section.label} type={section.active ? 'primary' : 'default'} block disabled={!section.active}>
-                    {section.label}
-                  </Button>
-                ))}
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  Остальные разделы появятся в Pro-версии.
-                </Text>
-              </Card>
-            </Col>
-            <Col xs={24} lg={18}>
+            <Col xs={24}>
               <Space direction="vertical" size={24} style={{ width: '100%' }}>
                 <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <Segmented
