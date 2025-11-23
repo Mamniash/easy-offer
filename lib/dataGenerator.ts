@@ -1717,7 +1717,6 @@ const generateQuestionsForRole = (
         id,
         roleSlug: role.slug,
         roleName: role.name,
-        category: role.category,
         title,
         level,
         type: topic.type,
@@ -1745,7 +1744,6 @@ const computeRoles = (questions: QuestionRecord[]): RoleDefinition[] => {
       map.set(question.roleSlug, {
         slug: question.roleSlug,
         name: question.roleName,
-        category: question.category,
       });
     }
   });

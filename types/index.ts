@@ -5,8 +5,8 @@ export type QuestionType = 'theory' | 'coding' | 'behavioral' | 'system_design';
 export type InterviewStage = 'screening' | 'technical' | 'on_site' | 'take_home';
 
 export interface RoleDefinition {
-	slug: string
-	name: string
+  slug: string;
+  name: string;
 }
 
 export interface AnswerVariant {
@@ -24,7 +24,6 @@ export interface QuestionRecord {
   id: string;
   roleSlug: string;
   roleName: string;
-  category: string;
   title: string;
   level: ExperienceLevel;
   type: QuestionType;

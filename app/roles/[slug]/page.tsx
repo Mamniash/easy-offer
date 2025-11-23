@@ -73,7 +73,6 @@ const buildCsv = (items: QuestionRecord[]) => {
     'id',
     'roleSlug',
     'roleName',
-    'category',
     'title',
     'level',
     'type',
