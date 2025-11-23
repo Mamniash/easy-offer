@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Col, Divider, Form, Input, List, Row, Space, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Divider, Form, Input, List, Modal, Row, Space, Tag, Typography, message } from 'antd';
 import { CalendarOutlined, CheckCircleFilled, ClockCircleOutlined, MailOutlined, RocketOutlined, SendOutlined } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 
@@ -28,6 +28,7 @@ export default function ProPage() {
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
   const [timezone, setTimezone] = useState<string | null>(null);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
   const sessionStartRef = useRef(Date.now());
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function ProPage() {
   const handleSubmit = async (values: { contact: string; note?: string }) => {
     if (!canSendMessage()) {
       message.warning('Можно отправить сообщение раз в минуту.');
-      return;
+      return false;
     }
 
     const payload = {
@@ -69,9 +70,11 @@ export default function ProPage() {
 
       message.success('Спасибо! Как только Pro появится, пришлём приглашение.');
       form.resetFields();
+      return true;
     } catch (error) {
       console.error('Ошибка при отправке сообщения', error);
       message.error('Не удалось отправить заявку. Попробуйте позже.');
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -197,72 +200,109 @@ export default function ProPage() {
 
           <Card
             style={{
-              borderRadius: 20,
-              border: '1px solid rgba(236, 72, 153, 0.2)',
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(236, 72, 153, 0.08) 45%, #ffffff 100%)',
+              borderRadius: 24,
+              border: '1px solid rgba(99, 102, 241, 0.18)',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(236, 72, 153, 0.08) 40%, #ffffff 100%)',
               boxShadow: '0 20px 60px rgba(99, 102, 241, 0.08)',
             }}
             bodyStyle={{ padding: 24 }}
           >
-            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+            <Space direction="vertical" size={14} style={{ width: '100%' }}>
               <Space align="center" size={12} wrap>
                 <SendOutlined style={{ fontSize: 22, color: '#ec4899' }} />
                 <div>
                   <Title level={4} style={{ margin: 0 }}>
-                    Получите приглашение в Pro
+                    Как с вами связаться?
                   </Title>
-                  <Text type="secondary">Сделали форму компактной: оставьте способ связи и пару слов о задачах.</Text>
+                  <Text type="secondary">Оставьте удобный контакт, и отправим приглашение в первую волну.</Text>
                 </div>
               </Space>
-              <Form
-                form={form}
-                layout="vertical"
-                requiredMark={false}
-                onFinish={handleSubmit}
-                style={{ marginTop: 4 }}
+              <Space size={10} wrap>
+                <Tag color="blue" icon={<MailOutlined />}>Почта или Telegram</Tag>
+                <Tag color="purple" icon={<ClockCircleOutlined />}>Ответим в рабочие часы</Tag>
+                <Tag color="magenta" icon={<RocketOutlined />}>Приоритетный доступ</Tag>
+              </Space>
+              <Card
+                size="small"
+                style={{
+                  borderRadius: 16,
+                  background: 'rgba(255, 255, 255, 0.7)',
+                  borderColor: 'rgba(99, 102, 241, 0.12)',
+                }}
+                bodyStyle={{ display: 'flex', gap: 12, alignItems: 'center', padding: 14 }}
               >
-                <div
-                  style={{
-                    display: 'grid',
-                    gap: 12,
-                    gridTemplateColumns: '1fr',
-                  }}
-                >
-                  <Form.Item
-                    name="contact"
-                    label="Как с вами связаться"
-                    rules={[{ required: true, message: 'Укажите почту или Telegram' }]}
-                  >
-                    <Input
-                      prefix={<MailOutlined />}
-                      placeholder="example@email.com или @username"
-                      autoComplete="email"
-                      allowClear
-                    />
-                  </Form.Item>
-                  <Form.Item name="note" label="Пару слов о ваших задачах">
-                    <Input.TextArea
-                      placeholder="Например: хочу видеть тренды по компаниям или выгрузку вопросов"
-                      autoSize={{ minRows: 2, maxRows: 3 }}
-                      allowClear
-                    />
-                  </Form.Item>
-                </div>
-                <Space
-                  size={12}
-                  wrap
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}
-                >
-                  <Button type="primary" htmlType="submit" loading={submitting} icon={<SendOutlined />}>
-                    Отправить контакт
-                  </Button>
-                  <Text type="secondary" style={{ marginLeft: 'auto' }}>
-                    Ответим в рабочие часы и пришлём свежие новости.
+                <div style={{ flex: 1 }}>
+                  <Title level={5} style={{ margin: 0 }}>
+                    Присоединитесь к списку раннего доступа
+                  </Title>
+                  <Text type="secondary">
+                    Мы напишем, когда Pro готов — без спама и лишних писем.
                   </Text>
+                </div>
+                <Space size={8} wrap>
+                  <Button onClick={() => setContactModalOpen(true)} icon={<SendOutlined />} type="primary">
+                    Оставить контакт
+                  </Button>
+                  <Button type="link" onClick={() => setContactModalOpen(true)}>
+                    Заполнить быстро
+                  </Button>
                 </Space>
-              </Form>
+              </Card>
             </Space>
           </Card>
+
+          <Modal
+            title="Оставьте контакт"
+            open={contactModalOpen}
+            onCancel={() => setContactModalOpen(false)}
+            footer={null}
+            destroyOnClose
+            centered
+          >
+            <Text type="secondary">
+              Пара строк: куда написать и чем помочь. Это займёт меньше минуты.
+            </Text>
+            <Form
+              form={form}
+              layout="vertical"
+              requiredMark={false}
+              onFinish={async (values) => {
+                const isSent = await handleSubmit(values);
+                if (isSent) {
+                  setContactModalOpen(false);
+                }
+              }}
+              style={{ marginTop: 16 }}
+            >
+              <Form.Item
+                name="contact"
+                label="Контакт"
+                rules={[{ required: true, message: 'Укажите почту или Telegram' }]}
+              >
+                <Input
+                  size="large"
+                  prefix={<MailOutlined />}
+                  placeholder="example@email.com или @username"
+                  autoComplete="email"
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item name="note" label="Пару слов о задачах">
+                <Input.TextArea
+                  size="large"
+                  placeholder="Что хотите улучшить в Pro?"
+                  autoSize={{ minRows: 2, maxRows: 3 }}
+                  allowClear
+                />
+              </Form.Item>
+              <Space style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text type="secondary">Ответим в рабочие часы.</Text>
+                <Button type="primary" htmlType="submit" loading={submitting} icon={<SendOutlined />}>
+                  Отправить
+                </Button>
+              </Space>
+            </Form>
+          </Modal>
         </Space>
       </div>
     </div>
