@@ -24,7 +24,6 @@ const computeRoles = (questions: QuestionRecord[]): RoleDefinition[] => {
       rolesMap.set(question.roleSlug, {
         slug: question.roleSlug,
         name: question.roleName,
-        category: question.category,
       });
     }
   });

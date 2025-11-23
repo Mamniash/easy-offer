@@ -112,7 +112,7 @@ const parseAnswerVariants = (value: unknown): AnswerVariant[] => {
 };
 
 const toQuestionRecord = (input: Partial<QuestionRecord>): QuestionRecord | null => {
-  if (!input.roleSlug || !input.roleName || !input.category || !input.title) {
+  if (!input.roleSlug || !input.roleName || !input.title) {
     return null;
   }
   const id = input.id ?? `${input.roleSlug}-${input.level ?? 'junior'}-${input.title}`;
@@ -123,7 +123,6 @@ const toQuestionRecord = (input: Partial<QuestionRecord>): QuestionRecord | null
     id,
     roleSlug: input.roleSlug,
     roleName: input.roleName,
-    category: input.category,
     title: input.title,
     level,
     type,
@@ -323,7 +322,6 @@ export default function ImportPage() {
   {
     "roleSlug": "frontend",
     "roleName": "Frontend Developer",
-    "category": "Web",
     "title": "Что такое Virtual DOM?",
     "level": "middle",
     "type": "theory",
