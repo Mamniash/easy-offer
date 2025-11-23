@@ -1,6 +1,7 @@
 import 'antd/dist/reset.css';
 
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 
 import AppShell from '@/components/AppShell';
 import AntdRegistry from '@/components/AntdRegistry';
@@ -8,6 +9,8 @@ import { DataProvider } from '@/providers/DataProvider';
 import { FreeAccessProvider } from '@/providers/FreeAccessProvider';
 
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'easyOffer demo',
@@ -22,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body style={{ background: '#f5f5f5', color: '#1f1f1f' }}>
+      <body className={inter.className}>
         <AntdRegistry>
           <DataProvider>
             <FreeAccessProvider>
