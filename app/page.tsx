@@ -10,6 +10,7 @@ import {
   Divider,
   List,
   Progress,
+  Modal,
   Row,
   Space,
   Tag,
@@ -17,7 +18,7 @@ import {
   Typography,
 } from 'antd';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { formatDate } from '@/lib/date';
 import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
@@ -98,14 +99,14 @@ const RoleCard = ({
   );
 };
 
-const CompaniesPreview = () => {
-  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 18), []);
+const CompaniesPreview = ({ onLockedClick }: { onLockedClick: () => void }) => {
+  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 12), []);
 
   return (
     <Carousel dots>
       {slides.map((companies, pageIndex) => (
         <div key={pageIndex}>
-          <Space wrap size={[12, 12]} style={{ width: '100%', justifyContent: 'center' }}>
+          <Space wrap size={[16, 16]} style={{ width: '100%', justifyContent: 'center' }}>
             {companies.map((company) => {
               const initials = company.name
                 .split(' ')
@@ -115,36 +116,46 @@ const CompaniesPreview = () => {
                 .toUpperCase();
 
               return (
-                <Tooltip key={company.name} title="Фильтры по брендам доступны в Pro">
-                  <div
+                <Card
+                  key={company.name}
+                  hoverable
+                  onClick={onLockedClick}
+                  style={{
+                    borderRadius: 22,
+                    border: '1px solid #e5e7eb',
+                    width: 260,
+                    boxShadow: '0 12px 36px rgba(15, 23, 42, 0.08)',
+                  }}
+                  bodyStyle={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 14,
+                    padding: 16,
+                  }}
+                >
+                  <Avatar
+                    size={56}
+                    shape="circle"
+                    src={company.logo}
                     style={{
+                      background: company.accent,
+                      color: '#111827',
+                      fontWeight: 800,
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 10,
-                      padding: '10px 14px',
-                      borderRadius: 999,
-                      border: '1px solid #e5e7eb',
-                      background: '#fff',
-                      boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
-                      position: 'relative',
-                      minWidth: 180,
+                      justifyContent: 'center',
                     }}
                   >
-                    <Avatar
-                      shape="circle"
-                      src={company.logo}
-                      style={{
-                        background: company.accent,
-                        color: '#111827',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {initials}
-                    </Avatar>
-                    <Text style={{ fontWeight: 600 }}>{company.name}</Text>
-                    <LockFilled style={{ position: 'absolute', right: 12, color: '#bfbfbf', fontSize: 12 }} />
-                  </div>
-                </Tooltip>
+                    {initials}
+                  </Avatar>
+                  <Space direction="vertical" size={4} style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={{ fontWeight: 700 }}>{company.name}</Text>
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      ≈ {statFormatter(company.mentions)} упоминаний за месяц
+                    </Text>
+                  </Space>
+                  <LockFilled style={{ color: '#bfbfbf' }} />
+                </Card>
               );
             })}
           </Space>
@@ -204,6 +215,7 @@ const QuestionPreview = ({
 
 export default function HomePage() {
   const { bundle, isCustom, lastUpdated } = useDataContext();
+  const [companyPromptOpen, setCompanyPromptOpen] = useState(false);
 
   const grouped = useMemo(() => {
     const roles = new Map(bundle.roles.map((role) => [role.slug, role]));
@@ -400,7 +412,7 @@ export default function HomePage() {
                 </Button>
               </Col>
             </Row>
-            <CompaniesPreview />
+            <CompaniesPreview onLockedClick={() => setCompanyPromptOpen(true)} />
           </Space>
         </div>
 
@@ -548,6 +560,24 @@ export default function HomePage() {
           </Row>
         </div>
       </Space>
+
+      <Modal
+        open={companyPromptOpen}
+        onCancel={() => setCompanyPromptOpen(false)}
+        title="Каталог по компаниям — в Pro"
+        footer={[
+          <Button key="pro" type="primary" href="/pro">
+            Оформить Pro
+          </Button>,
+          <Button key="close" onClick={() => setCompanyPromptOpen(false)}>
+            Понятно
+          </Button>,
+        ]}
+      >
+        <Paragraph>
+          Подробные страницы по брендам, фильтры и сравнение вопросов доступны только в Pro-подписке.
+        </Paragraph>
+      </Modal>
     </div>
   );
 }
