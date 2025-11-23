@@ -1,9 +1,9 @@
 'use client';
 
 import { ArrowRightOutlined, LockFilled, PlayCircleFilled } from '@ant-design/icons';
-import { Avatar, Button, Card, Carousel, Col, Divider, List, Row, Space, Tag, Tooltip, Typography } from 'antd';
+import { Avatar, Button, Card, Carousel, Col, Divider, Modal, Row, Space, Tag, Typography } from 'antd';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { formatDate } from '@/lib/date';
 import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
@@ -90,14 +90,14 @@ const RoleCard = ({
   );
 };
 
-const CompaniesPreview = () => {
-  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 18), []);
+const CompaniesPreview = ({ onCompanyClick }: { onCompanyClick: () => void }) => {
+  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 12), []);
 
   return (
-    <Carousel dots>
+    <Carousel dots draggable>
       {slides.map((companies, pageIndex) => (
         <div key={pageIndex}>
-          <Space wrap size={[12, 12]} style={{ width: '100%', justifyContent: 'center' }}>
+          <Space wrap size={[16, 16]} style={{ width: '100%', justifyContent: 'center' }}>
             {companies.map((company) => {
               const initials = company.name
                 .split(' ')
@@ -107,36 +107,42 @@ const CompaniesPreview = () => {
                 .toUpperCase();
 
               return (
-                <Tooltip key={company.name} title="Фильтры по брендам доступны в Pro">
-                  <div
+                <Card
+                  key={company.name}
+                  hoverable
+                  onClick={onCompanyClick}
+                  style={{
+                    borderRadius: 20,
+                    minWidth: 240,
+                    maxWidth: 280,
+                    border: '1px solid #e5e7eb',
+                    boxShadow: '0 16px 40px rgba(15, 23, 42, 0.08)',
+                  }}
+                  bodyStyle={{ display: 'flex', alignItems: 'center', gap: 14, padding: 16 }}
+                >
+                  <Avatar
+                    size={56}
+                    shape="circle"
+                    src={company.logo}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      padding: '10px 14px',
-                      borderRadius: 999,
-                      border: '1px solid #e5e7eb',
-                      background: '#fff',
-                      boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
-                      position: 'relative',
-                      minWidth: 180,
+                      background: company.accent,
+                      color: '#111827',
+                      fontWeight: 800,
+                      fontSize: 18,
                     }}
                   >
-                    <Avatar
-                      shape="circle"
-                      src={company.logo}
-                      style={{
-                        background: company.accent,
-                        color: '#111827',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {initials}
-                    </Avatar>
-                    <Text style={{ fontWeight: 600 }}>{company.name}</Text>
-                    <LockFilled style={{ position: 'absolute', right: 12, color: '#bfbfbf', fontSize: 12 }} />
-                  </div>
-                </Tooltip>
+                    {initials}
+                  </Avatar>
+                  <Space direction="vertical" size={2} style={{ flex: 1 }}>
+                    <Text strong style={{ fontSize: 16 }}>
+                      {company.name}
+                    </Text>
+                    <Text type="secondary">≈ {statFormatter(company.mentions)} упоминаний</Text>
+                  </Space>
+                  <Tag color="purple" icon={<LockFilled />} style={{ borderRadius: 999 }}>
+                    Pro
+                  </Tag>
+                </Card>
               );
             })}
           </Space>
@@ -148,6 +154,7 @@ const CompaniesPreview = () => {
 
 export default function HomePage() {
   const { bundle, isCustom, lastUpdated } = useDataContext();
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
 
   const grouped = useMemo(() => {
     const roles = new Map(bundle.roles.map((role) => [role.slug, role]));
@@ -320,7 +327,9 @@ export default function HomePage() {
                   <Title level={3} style={{ margin: 0 }}>
                     Популярные компании
                   </Title>
-                  <Text type="secondary">В демо только предпросмотр. Полные фильтры — в Pro.</Text>
+                  <Text type="secondary">
+                    Заходите в бренд и смотрите, что спрашивают именно там. Полные фильтры и подборки — в Pro.
+                  </Text>
                 </Space>
               </Col>
               <Col>
@@ -329,7 +338,7 @@ export default function HomePage() {
                 </Button>
               </Col>
             </Row>
-            <CompaniesPreview />
+            <CompaniesPreview onCompanyClick={() => setShowCompanyModal(true)} />
           </Space>
         </div>
 
@@ -445,6 +454,24 @@ export default function HomePage() {
           </Row>
         </div>
       </Space>
+
+      <Modal
+        open={showCompanyModal}
+        onCancel={() => setShowCompanyModal(false)}
+        title="Фильтры по компаниям доступны в Pro"
+        footer={[
+          <Button key="pro" type="primary" href="/pro">
+            Оформить Pro
+          </Button>,
+          <Button key="close" onClick={() => setShowCompanyModal(false)}>
+            Понятно
+          </Button>,
+        ]}
+      >
+        <Paragraph style={{ marginBottom: 0 }}>
+          В подписке откроются вопросы и тренды по каждому бренду, а также фильтры по компаниям и форматам интервью.
+        </Paragraph>
+      </Modal>
     </div>
   );
 }

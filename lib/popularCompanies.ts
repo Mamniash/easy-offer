@@ -105,31 +105,37 @@ export const POPULAR_COMPANIES: PopularCompany[] = [
   {
     name: 'Ситимобил',
     accent: '#FF7A00',
+    logo: 'https://logo.clearbit.com/city-mobil.ru',
     mentions: 4700,
   },
   {
     name: 'Яндекс Еда',
     accent: '#FFCC00',
+    logo: 'https://logo.clearbit.com/eda.yandex.ru',
     mentions: 4600,
   },
   {
     name: 'Деливери Клаб',
     accent: '#21B047',
+    logo: 'https://logo.clearbit.com/delivery-club.ru',
     mentions: 4300,
   },
   {
     name: 'Ozon Fintech',
     accent: '#4F46E5',
+    logo: 'https://cdn.simpleicons.org/ozon/ffffff',
     mentions: 4200,
   },
   {
     name: 'Сколково',
     accent: '#B4D333',
+    logo: 'https://logo.clearbit.com/sk.ru',
     mentions: 4100,
   },
   {
     name: 'Ростелеком',
     accent: '#5B57D8',
+    logo: 'https://cdn.simpleicons.org/rostelecom/ffffff',
     mentions: 3800,
   },
   {
@@ -145,12 +151,13 @@ export const POPULAR_COMPANIES: PopularCompany[] = [
   {
     name: 'HeadHunter',
     accent: '#E30613',
-    logo: 'https://cdn.simpleicons.org/habr/ffffff',
+    logo: 'https://cdn.simpleicons.org/headhunter/ffffff',
     mentions: 3200,
   },
   {
     name: 'Ostrovok',
     accent: '#0087D6',
+    logo: 'https://logo.clearbit.com/ostrovok.ru',
     mentions: 3000,
   },
   {
@@ -162,11 +169,13 @@ export const POPULAR_COMPANIES: PopularCompany[] = [
   {
     name: 'Яндекс Маркет',
     accent: '#F5C71A',
+    logo: 'https://logo.clearbit.com/market.yandex.ru',
     mentions: 2800,
   },
   {
     name: 'СберМаркет',
     accent: '#0EA75A',
+    logo: 'https://logo.clearbit.com/sbermarket.ru',
     mentions: 2650,
   },
   {

@@ -512,23 +512,30 @@ const proMorePerks = [
                     </Card>
                   </Col>
                   <Col xs={24} lg={8}>
-                    <Card style={{ borderRadius: 24 }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                      <Row align="middle" justify="space-between">
-                        <Col>
+                    <Card
+                      style={{ borderRadius: 24, position: 'sticky', top: 88 }}
+                      bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+                    >
+                      <Space align="center" justify="space-between">
+                        <Space size={8} align="center">
                           <Text type="secondary" style={{ textTransform: 'uppercase', fontSize: 12 }}>
-                            Популярные компании
+                            Фильтр по компаниям
                           </Text>
-                        </Col>
-                        <Col>
                           <Tag icon={<LockFilled />} color="purple">
                             Pro
                           </Tag>
-                        </Col>
-                      </Row>
+                        </Space>
+                        <Button type="link" size="small" href="/pro">
+                          Подробнее
+                        </Button>
+                      </Space>
+                      <Title level={4} style={{ margin: 0 }}>
+                        Популярные работодатели
+                      </Title>
                       <Text type="secondary">
-                        Смотрим, какие бренды чаще упоминают такие вопросы на интервью.
+                        Выбирайте бренды, чтобы отсечь нерелевантные вопросы. В демо — предпросмотр без кликов.
                       </Text>
-                      <Space direction="vertical" size={12}>
+                      <Space wrap size={[8, 8]}>
                         {popularCompanies.map((company, index) => {
                           const palette = company.accent
                             ? [company.accent, company.accent]
@@ -539,17 +546,24 @@ const proMorePerks = [
                             .join('')
                             .slice(0, 2)
                             .toUpperCase();
+
                           return (
-                            <Card
+                            <Button
                               key={company.name}
-                              hoverable
+                              shape="round"
+                              size="large"
                               onClick={handleCompanyClick}
-                              style={{ borderRadius: 20 }}
-                              bodyStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}
-                            >
-                              <Space size={12}>
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 10,
+                                borderRadius: 999,
+                                padding: '8px 12px',
+                                boxShadow: '0 8px 20px rgba(15, 23, 42, 0.05)',
+                              }}
+                              icon={
                                 <Avatar
-                                  size={48}
+                                  size={32}
                                   style={{
                                     background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
                                     display: 'flex',
@@ -560,22 +574,23 @@ const proMorePerks = [
                                 >
                                   {initials}
                                 </Avatar>
-                                <Space direction="vertical" size={0}>
-                                  <Text strong>{company.name}</Text>
-                                  <Text type="secondary">≈ {formatNumber(company.mentions)} упоминаний за 4 недели</Text>
-                                </Space>
-                              </Space>
-                              <Tag icon={<LockFilled />} color="purple">
-                                Pro
-                              </Tag>
-                            </Card>
+                              }
+                            >
+                              {company.name}
+                            </Button>
                           );
                         })}
                       </Space>
                       <Card style={{ borderRadius: 16, background: '#f8fafc' }}>
-                        <Text type="secondary" style={{ fontSize: 12 }}>
-                          В подписке появятся фильтры по брендам, графики трендов и подборки вопросов по каждому работодателю.
-                        </Text>
+                        <Space direction="vertical" size={8}>
+                          <Text strong>Фильтруйте вопросы по брендам</Text>
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            Активируйте Pro, чтобы закрепить фильтр справа и собирать подборки вопросов по каждому работодателю.
+                          </Text>
+                          <Button type="primary" block href="/pro">
+                            Оформить Pro
+                          </Button>
+                        </Space>
                       </Card>
                     </Card>
                   </Col>
