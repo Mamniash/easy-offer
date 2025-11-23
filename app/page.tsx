@@ -172,13 +172,6 @@ export default function HomePage() {
     return mapped;
   }, [bundle.roles]);
 
-  const proPerks = [
-    'Полные библиотеки вопросов без лимитов',
-    'Фильтрация по компаниям и форматам интервью',
-    'Видео-ответы и стенограммы от кандидатов уровня Middle/Senior',
-    'Пакеты задач и чек-листы подготовки',
-  ];
-
   return (
     <div style={{ background: '#f5f5f5' }}>
       <Space direction="vertical" size={64} style={{ width: '100%' }}>
@@ -432,31 +425,7 @@ export default function HomePage() {
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
           <Row gutter={[24, 24]}>
-            <Col xs={24} lg={12}>
-              <Card style={{ borderRadius: 24, height: '100%' }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1 }}>
-                  Pro подписка
-                </Text>
-                <Title level={3} style={{ margin: 0 }}>
-                  Разблокируй весь контент
-                </Title>
-                <List
-                  dataSource={proPerks}
-                  renderItem={(perk) => (
-                    <List.Item style={{ padding: '4px 0' }}>
-                      <Space>
-                        <span style={{ width: 8, height: 8, background: '#6366f1', borderRadius: '50%' }} />
-                        <Text>{perk}</Text>
-                      </Space>
-                    </List.Item>
-                  )}
-                />
-                <Button type="primary" href="/pro">
-                  Оформить Pro
-                </Button>
-              </Card>
-            </Col>
-            <Col xs={24} lg={12}>
+            <Col xs={24}>
               <Card style={{ borderRadius: 24, height: '100%' }} bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <Text type="secondary" style={{ textTransform: 'uppercase', letterSpacing: 1 }}>
                   Документы
