@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useCallback, useMemo, useState } from 'react';
 
-import { generateSyntheticBundle } from '@/lib/dataGenerator';
+import { buildDefaultBundle } from '@/lib/staticBundle';
 import type { DataBundle, QuestionRecord, RoleDefinition } from '@/types';
 
 interface DataContextValue {
@@ -56,7 +56,7 @@ const normalizeBundle = (
 };
 
 const readInitialState = () => {
-  const fallback = generateSyntheticBundle();
+  const fallback = buildDefaultBundle();
   if (typeof window === 'undefined') {
     return { bundle: fallback, isCustom: false, lastUpdated: new Date() };
   }
@@ -107,7 +107,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const replaceWithSynthetic = useCallback(() => {
-    const synthetic = generateSyntheticBundle();
+    const synthetic = buildDefaultBundle();
     persist(synthetic, false);
   }, [persist]);
 
