@@ -332,9 +332,21 @@ export default function HomePage() {
             <Row align="middle" justify="space-between" gutter={[16, 16]}>
               <Col>
                 <Space direction="vertical" size={8}>
-                  <Tag color="blue" style={{ alignSelf: 'flex-start' }}>
+                  <div
+                    style={{
+                      alignSelf: 'flex-start',
+                      padding: '8px 14px',
+                      borderRadius: 999,
+                      background: 'linear-gradient(90deg, #f0f4ff 0%, #e6f4ff 100%)',
+                      border: '1px solid #bfdbfe',
+                      color: '#1d4ed8',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      boxShadow: '0 10px 24px rgba(24, 144, 255, 0.12)',
+                    }}
+                  >
                     Прокачайте насмотренность
-                  </Tag>
+                  </div>
                   <Title level={3} style={{ margin: 0 }}>
                     Видео-ответы и разборы
                   </Title>
