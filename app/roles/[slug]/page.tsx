@@ -2,27 +2,12 @@
 
 import { CheckCircleFilled, LockFilled, PlayCircleFilled } from '@ant-design/icons';
 import type { InputRef } from 'antd/es/input';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Input,
-  List,
-  Modal,
-  Row,
-  Segmented,
-  Select,
-  Space,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Breadcrumb, Button, Card, Col, Input, List, Modal, Row, Segmented, Select, Space, Tag, Tooltip, Typography } from 'antd';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 
+import LogoAvatar from '@/components/LogoAvatar';
 import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
 import { useDataContext } from '@/providers/DataProvider';
 import { useFreeAccess } from '@/providers/FreeAccessProvider';
@@ -534,12 +519,6 @@ const proMorePerks = [
                       const palette = company.accent
                         ? [company.accent, company.accent]
                         : companyPalette[index % companyPalette.length];
-                      const initials = company.name
-                        .split(' ')
-                        .map((part) => part[0])
-                        .join('')
-                        .slice(0, 2)
-                        .toUpperCase();
                       return (
                         <Card
                           key={company.name}
@@ -549,18 +528,13 @@ const proMorePerks = [
                           bodyStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}
                         >
                           <Space size={12}>
-                            <Avatar
+                            <LogoAvatar
+                              name={company.name}
+                              logo={company.logo}
+                              background={`linear-gradient(135deg, ${palette[0]}, ${palette[1]})`}
                               size={48}
-                              style={{
-                                background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}
-                              src={company.logo}
-                            >
-                              {initials}
-                            </Avatar>
+                              textColor="#fff"
+                            />
                             <Space direction="vertical" size={0}>
                               <Text strong>{company.name}</Text>
                               <Text type="secondary">≈ {formatNumber(company.mentions)} упоминаний за 4 недели</Text>

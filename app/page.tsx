@@ -1,25 +1,11 @@
 'use client';
 
 import { ArrowRightOutlined, LockFilled, PlayCircleFilled } from '@ant-design/icons';
-import {
-  Avatar,
-  Button,
-  Card,
-  Carousel,
-  Col,
-  Divider,
-  List,
-  Progress,
-  Modal,
-  Row,
-  Space,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, Card, Carousel, Col, Divider, List, Progress, Modal, Row, Space, Tag, Tooltip, Typography } from 'antd';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
+import LogoAvatar from '@/components/LogoAvatar';
 import { formatDate } from '@/lib/date';
 import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
 import { roleGroups } from '@/lib/roles';
@@ -108,13 +94,6 @@ const CompaniesPreview = ({ onLockedClick }: { onLockedClick: () => void }) => {
         <div key={pageIndex}>
           <Space wrap size={[16, 16]} style={{ width: '100%', justifyContent: 'center' }}>
             {companies.map((company) => {
-              const initials = company.name
-                .split(' ')
-                .map((part) => part[0])
-                .join('')
-                .slice(0, 2)
-                .toUpperCase();
-
               return (
                 <Card
                   key={company.name}
@@ -133,21 +112,7 @@ const CompaniesPreview = ({ onLockedClick }: { onLockedClick: () => void }) => {
                     padding: 16,
                   }}
                 >
-                  <Avatar
-                    size={56}
-                    shape="circle"
-                    src={company.logo}
-                    style={{
-                      background: company.accent,
-                      color: '#111827',
-                      fontWeight: 800,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {initials}
-                  </Avatar>
+                  <LogoAvatar name={company.name} logo={company.logo} accent={company.accent} size={56} />
                   <Space direction="vertical" size={4} style={{ flex: 1, minWidth: 0 }}>
                     <Text style={{ fontWeight: 700 }}>{company.name}</Text>
                     <Text type="secondary" style={{ fontSize: 12 }}>
