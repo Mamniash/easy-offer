@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 
 import { formatDate } from '@/lib/date';
+import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
 import { roleGroups } from '@/lib/roles';
 import { useDataContext } from '@/providers/DataProvider';
 
@@ -28,19 +29,18 @@ const { Title, Paragraph, Text } = Typography;
 const statFormatter = (value: number) =>
   new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Math.round(value));
 
+const chunkArray = <T,>(items: T[], size: number): T[][] => {
+  const result: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    result.push(items.slice(index, index + size));
+  }
+  return result;
+};
+
 const gradients = [
   'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
   'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
   'linear-gradient(135deg, #059669 0%, #0f766e 100%)',
-];
-
-const companyGradients = [
-  'linear-gradient(135deg, #4338ca 0%, #7c3aed 100%)',
-  'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-  'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-  'linear-gradient(135deg, #14b8a6 0%, #0f766e 100%)',
-  'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-  'linear-gradient(135deg, #f472b6 0%, #db2777 100%)',
 ];
 
 const videoBackgrounds: Record<string, string> = {
@@ -98,42 +98,59 @@ const RoleCard = ({
   );
 };
 
-const CompaniesPreview = ({ companies }: { companies: string[] }) => {
-  const limited = companies.slice(0, 12);
+const CompaniesPreview = () => {
+  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 18), []);
+
   return (
-    <List
-      grid={{ gutter: 16, column: 6, xs: 2, sm: 3, md: 4, lg: 6 }}
-      dataSource={limited}
-      renderItem={(company, index) => {
-        const initials = company
-          .split(' ')
-          .map((part) => part[0])
-          .join('')
-          .slice(0, 2)
-          .toUpperCase();
-        return (
-          <List.Item>
-              <Card
-                size="small"
-                hoverable
-                style={{ borderRadius: 16, position: 'relative' }}
-                bodyStyle={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16 }}
-              >
-              <Avatar
-                style={{
-                  background: companyGradients[index % companyGradients.length],
-                  fontWeight: 600,
-                }}
-              >
-                {initials}
-              </Avatar>
-              <Text style={{ fontWeight: 500 }}>{company}</Text>
-              <LockFilled style={{ position: 'absolute', right: 12, top: 12, color: '#bfbfbf', fontSize: 12 }} />
-            </Card>
-          </List.Item>
-        );
-      }}
-    />
+    <Carousel dots>
+      {slides.map((companies, pageIndex) => (
+        <div key={pageIndex}>
+          <Space wrap size={[12, 12]} style={{ width: '100%', justifyContent: 'center' }}>
+            {companies.map((company) => {
+              const initials = company.name
+                .split(' ')
+                .map((part) => part[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase();
+
+              return (
+                <Tooltip key={company.name} title="Фильтры по брендам доступны в Pro">
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '10px 14px',
+                      borderRadius: 999,
+                      border: '1px solid #e5e7eb',
+                      background: '#fff',
+                      boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+                      position: 'relative',
+                      minWidth: 180,
+                    }}
+                  >
+                    <Avatar
+                      shape="circle"
+                      src={company.logo}
+                      style={{
+                        background: company.accent,
+                        color: '#111827',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {initials}
+                    </Avatar>
+                    <Text style={{ fontWeight: 600 }}>{company.name}</Text>
+                    <LockFilled style={{ position: 'absolute', right: 12, color: '#bfbfbf', fontSize: 12 }} />
+                  </div>
+                </Tooltip>
+              );
+            })}
+          </Space>
+        </div>
+      ))}
+    </Carousel>
   );
 };
 
@@ -383,7 +400,7 @@ export default function HomePage() {
                 </Button>
               </Col>
             </Row>
-            <CompaniesPreview companies={bundle.companies} />
+            <CompaniesPreview />
           </Space>
         </div>
 
