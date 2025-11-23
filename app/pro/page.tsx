@@ -81,230 +81,296 @@ export default function ProPage() {
   };
 
   return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, #f4f6ff 0%, #fdf3ff 40%, #ffffff 100%)',
-        minHeight: '100vh',
-      }}
-    >
-      <div style={{ maxWidth: 1040, margin: '0 auto', padding: '80px 24px' }}>
-        <Space direction="vertical" size={40} style={{ width: '100%' }}>
-          <Card
-            style={{ borderRadius: 28, border: 'none', boxShadow: '0 30px 80px rgba(99, 102, 241, 0.15)' }}
-            bodyStyle={{ padding: 36, background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', color: '#fff' }}
-          >
-            <Space direction="vertical" size={16} style={{ width: '100%' }}>
-              <Tag color="gold" style={{ alignSelf: 'flex-start', padding: '6px 12px', fontWeight: 600 }}>
-                <ClockCircleOutlined />{' '}
-                Скоро запуск
-              </Tag>
-              <Space size={12} align="center">
-                <RocketOutlined style={{ fontSize: 28 }} />
-                <div>
-                  <Title level={1} style={{ margin: 0, color: '#fff' }}>
-                    Pro-доступ скоро появится
-                  </Title>
-                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 18 }}>
-                    Мы собираем обратную связь, чтобы сделать расширенный тариф максимально полезным: глубже фильтруйте,
-                    открывайте ответы без ограничений и смотрите подборки похожих вопросов.
-                  </Text>
-                </div>
-              </Space>
-              <Space size="middle" wrap>
-                <Button type="primary" size="large" href="/" style={{ background: '#fff', color: '#4c51f7' }}>
-                  Вернуться к профессиям
-                </Button>
-                <Button size="large" href="#features" icon={<MailOutlined /> }>
-                  Сообщите, чего вам не хватает
-                </Button>
-              </Space>
-            </Space>
-          </Card>
+		<div
+			style={{
+				background:
+					'linear-gradient(135deg, #f4f6ff 0%, #fdf3ff 40%, #ffffff 100%)',
+				minHeight: '100vh'
+			}}
+		>
+			<div
+				style={{ maxWidth: 1040, margin: '0 auto', padding: '80px 24px' }}
+			>
+				<Space direction='vertical' size={40} style={{ width: '100%' }}>
+					<Card
+						style={{
+							borderRadius: 28,
+							border: 'none',
+							boxShadow: '0 30px 80px rgba(99, 102, 241, 0.15)'
+						}}
+						bodyStyle={{
+							padding: 36,
+							background:
+								'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+							color: '#fff'
+						}}
+					>
+						<Space
+							direction='vertical'
+							size={16}
+							style={{ width: '100%' }}
+						>
+							<Space size={12} align='center'>
+								<RocketOutlined style={{ fontSize: 28 }} />
+								<div>
+									<Title
+										level={1}
+										style={{ margin: 0, color: '#fff' }}
+									>
+										Pro-доступ скоро появится
+									</Title>
+									<Text
+										style={{
+											color: 'rgba(255,255,255,0.85)',
+											fontSize: 18
+										}}
+									>
+										Мы собираем обратную связь, чтобы сделать
+										расширенный тариф максимально полезным: глубже
+										фильтруйте, открывайте ответы без ограничений и
+										смотрите подборки похожих вопросов.
+									</Text>
+								</div>
+							</Space>
+							<Space size='middle' wrap>
+								<Button
+									type='primary'
+									size='large'
+									href='/'
+									style={{ background: '#fff', color: '#4c51f7' }}
+								>
+									Вернуться к профессиям
+								</Button>
+								<Button
+									size='large'
+									href='#features'
+									icon={<MailOutlined />}
+								>
+									Сообщите, чего вам не хватает
+								</Button>
+							</Space>
+						</Space>
+					</Card>
 
-          <Card id="features" style={{ borderRadius: 24 }} bodyStyle={{ padding: 32 }}>
-            <Row gutter={[32, 32]}>
-              <Col xs={24} md={12}>
-                <Space direction="vertical" size={16}>
-                  <Title level={3} style={{ margin: 0 }}>
-                    Что будет в Pro
-                  </Title>
-                  <List
-                    dataSource={[
-                      'Безлимитные раскрытия вопросов и быстрый просмотр кратких ответов',
-                      'Фильтры по компаниям, географии и динамике спроса',
-                      'Расширенный блок «смотреть похожие вопросы» с подборками',
-                      'Экспорт расширенных отчётов и заметок',
-                    ]}
-                    renderItem={(item) => (
-                      <List.Item style={{ padding: '4px 0' }}>
-                        <Space size={8}>
-                          <CheckCircleFilled style={{ color: '#52c41a' }} />
-                          <Text>{item}</Text>
-                        </Space>
-                      </List.Item>
-                    )}
-                  />
-                </Space>
-              </Col>
-              <Col xs={24} md={12}>
-                <Space direction="vertical" size={16}>
-                  <Title level={3} style={{ margin: 0 }}>
-                    Что уже можно делать
-                  </Title>
-                  <List
-                    dataSource={[
-                      'Изучить сетку ролей и список вопросов',
-                      'Посмотреть частоту и тренды по неделям',
-                      'Импортировать собственную базу вопросов',
-                      'Экспортировать текущий список в CSV',
-                    ]}
-                    renderItem={(item) => (
-                      <List.Item style={{ padding: '4px 0' }}>
-                        <Space size={8}>
-                          <CheckCircleFilled style={{ color: '#52c41a' }} />
-                          <Text>{item}</Text>
-                        </Space>
-                      </List.Item>
-                    )}
-                  />
-                </Space>
-              </Col>
-            </Row>
-          </Card>
+					<Card
+						id='features'
+						style={{ borderRadius: 24 }}
+						bodyStyle={{ padding: 32 }}
+					>
+						<Row gutter={[32, 32]}>
+							<Col xs={24} md={12}>
+								<Space direction='vertical' size={16}>
+									<Title level={3} style={{ margin: 0 }}>
+										Что будет в Pro
+									</Title>
+									<List
+										dataSource={[
+											'Безлимитные раскрытия вопросов и быстрый просмотр кратких ответов',
+											'Фильтры по компаниям, географии и динамике спроса',
+											'Расширенный блок «смотреть похожие вопросы» с подборками',
+											'Экспорт расширенных отчётов и заметок'
+										]}
+										renderItem={(item) => (
+											<List.Item style={{ padding: '4px 0' }}>
+												<Space size={8}>
+													<CheckCircleFilled
+														style={{ color: '#52c41a' }}
+													/>
+													<Text>{item}</Text>
+												</Space>
+											</List.Item>
+										)}
+									/>
+								</Space>
+							</Col>
+							<Col xs={24} md={12}>
+								<Space direction='vertical' size={16}>
+									<Title level={3} style={{ margin: 0 }}>
+										Что уже можно делать
+									</Title>
+									<List
+										dataSource={[
+											'Изучить сетку ролей и список вопросов',
+											'Посмотреть частоту и тренды по неделям',
+											'Импортировать собственную базу вопросов',
+											'Экспортировать текущий список в CSV'
+										]}
+										renderItem={(item) => (
+											<List.Item style={{ padding: '4px 0' }}>
+												<Space size={8}>
+													<CheckCircleFilled
+														style={{ color: '#52c41a' }}
+													/>
+													<Text>{item}</Text>
+												</Space>
+											</List.Item>
+										)}
+									/>
+								</Space>
+							</Col>
+						</Row>
+					</Card>
 
-          <Card style={{ borderRadius: 20, borderColor: '#e0e7ff' }}>
-            <Space align="center" wrap size={20}>
-              <CalendarOutlined style={{ fontSize: 26, color: '#6366f1' }} />
-              <Space direction="vertical" size={4}>
-                <Title level={4} style={{ margin: 0 }}>
-                  Присоединяйтесь к списку раннего доступа
-                </Title>
-                <Text type="secondary">
-                  Оставьте контакт: пришлём первые приглашения, как только Pro появится.
-                </Text>
-              </Space>
-            </Space>
-            <Divider style={{ margin: '16px 0' }} />
-            <Space size="middle" wrap>
-              <Tag icon={<ClockCircleOutlined />} color="processing">
-                Оповещение о запуске
-              </Tag>
-              <Tag icon={<RocketOutlined />} color="purple">
-                Закрытая бета в приоритете
-              </Tag>
-              <Tag icon={<MailOutlined />} color="blue">
-                Персональные обновления
-              </Tag>
-            </Space>
-          </Card>
+					<Card style={{ borderRadius: 20, borderColor: '#e0e7ff' }}>
+						<Space align='center' wrap size={20}>
+							<CalendarOutlined
+								style={{ fontSize: 26, color: '#6366f1' }}
+							/>
+							<Space direction='vertical' size={4}>
+								<Title level={4} style={{ margin: 0 }}>
+									Присоединяйтесь к списку раннего доступа
+								</Title>
+								<Text type='secondary'>
+									Оставьте контакт: пришлём первые приглашения, как
+									только Pro появится.
+								</Text>
+							</Space>
+						</Space>
+						<Divider style={{ margin: '16px 0' }} />
+					</Card>
 
-          <Card
-            style={{
-              borderRadius: 24,
-              border: '1px solid rgba(99, 102, 241, 0.18)',
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(236, 72, 153, 0.08) 40%, #ffffff 100%)',
-              boxShadow: '0 20px 60px rgba(99, 102, 241, 0.08)',
-            }}
-            bodyStyle={{ padding: 24 }}
-          >
-            <Space direction="vertical" size={14} style={{ width: '100%' }}>
-              <Space align="center" size={12} wrap>
-                <SendOutlined style={{ fontSize: 22, color: '#ec4899' }} />
-                <div>
-                  <Title level={4} style={{ margin: 0 }}>
-                    Как с вами связаться?
-                  </Title>
-                  <Text type="secondary">Оставьте удобный контакт, и отправим приглашение в первую волну.</Text>
-                </div>
-              </Space>
-              <Space size={10} wrap>
-                <Tag color="blue" icon={<MailOutlined />}>Почта или Telegram</Tag>
-                <Tag color="purple" icon={<ClockCircleOutlined />}>Ответим в рабочие часы</Tag>
-                <Tag color="magenta" icon={<RocketOutlined />}>Приоритетный доступ</Tag>
-              </Space>
-              <Card
-                size="small"
-                style={{
-                  borderRadius: 16,
-                  background: 'rgba(255, 255, 255, 0.7)',
-                  borderColor: 'rgba(99, 102, 241, 0.12)',
-                }}
-                bodyStyle={{ display: 'flex', gap: 12, alignItems: 'center', padding: 14 }}
-              >
-                <div style={{ flex: 1 }}>
-                  <Title level={5} style={{ margin: 0 }}>
-                    Присоединитесь к списку раннего доступа
-                  </Title>
-                  <Text type="secondary">
-                    Мы напишем, когда Pro готов — без спама и лишних писем.
-                  </Text>
-                </div>
-                <Space size={8} wrap>
-                  <Button onClick={() => setContactModalOpen(true)} icon={<SendOutlined />} type="primary">
-                    Оставить контакт
-                  </Button>
-                  <Button type="link" onClick={() => setContactModalOpen(true)}>
-                    Заполнить быстро
-                  </Button>
-                </Space>
-              </Card>
-            </Space>
-          </Card>
+					<Card
+						style={{
+							borderRadius: 24,
+							border: '1px solid rgba(99, 102, 241, 0.18)',
+							background:
+								'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(236, 72, 153, 0.08) 40%, #ffffff 100%)',
+							boxShadow: '0 20px 60px rgba(99, 102, 241, 0.08)'
+						}}
+						bodyStyle={{ padding: 24 }}
+					>
+						<Space
+							direction='vertical'
+							size={14}
+							style={{ width: '100%' }}
+						>
+							<Space align='center' size={12} wrap>
+								<SendOutlined
+									style={{ fontSize: 22, color: '#ec4899' }}
+								/>
+								<div>
+									<Title level={4} style={{ margin: 0 }}>
+										Как с вами связаться?
+									</Title>
+									<Text type='secondary'>
+										Оставьте удобный контакт, и отправим приглашение в
+										первую волну.
+									</Text>
+								</div>
+							</Space>
+							<Card
+								size='small'
+								style={{
+									borderRadius: 16,
+									background: 'rgba(255, 255, 255, 0.7)',
+									borderColor: 'rgba(99, 102, 241, 0.12)'
+								}}
+								bodyStyle={{
+									display: 'flex',
+									gap: 12,
+									alignItems: 'center',
+									padding: 14
+								}}
+							>
+								<div style={{ flex: 1 }}>
+									<Title level={5} style={{ margin: 0 }}>
+										Присоединитесь к списку раннего доступа
+									</Title>
+									<Text type='secondary'>
+										Мы напишем, когда Pro готов — без спама и лишних
+										писем.
+									</Text>
+								</div>
+								<Space size={8} wrap>
+									<Button
+										onClick={() => setContactModalOpen(true)}
+										icon={<SendOutlined />}
+										type='primary'
+									>
+										Оставить контакт
+									</Button>
+									<Button
+										type='link'
+										onClick={() => setContactModalOpen(true)}
+									>
+										Заполнить быстро
+									</Button>
+								</Space>
+							</Card>
+						</Space>
+					</Card>
 
-          <Modal
-            title="Оставьте контакт"
-            open={contactModalOpen}
-            onCancel={() => setContactModalOpen(false)}
-            footer={null}
-            destroyOnClose
-            centered
-          >
-            <Text type="secondary">
-              Пара строк: куда написать и чем помочь. Это займёт меньше минуты.
-            </Text>
-            <Form
-              form={form}
-              layout="vertical"
-              requiredMark={false}
-              onFinish={async (values) => {
-                const isSent = await handleSubmit(values);
-                if (isSent) {
-                  setContactModalOpen(false);
-                }
-              }}
-              style={{ marginTop: 16 }}
-            >
-              <Form.Item
-                name="contact"
-                label="Контакт"
-                rules={[{ required: true, message: 'Укажите почту или Telegram' }]}
-              >
-                <Input
-                  size="large"
-                  prefix={<MailOutlined />}
-                  placeholder="example@email.com или @username"
-                  autoComplete="email"
-                  allowClear
-                />
-              </Form.Item>
-              <Form.Item name="note" label="Пару слов о задачах">
-                <Input.TextArea
-                  size="large"
-                  placeholder="Что хотите улучшить в Pro?"
-                  autoSize={{ minRows: 2, maxRows: 3 }}
-                  allowClear
-                />
-              </Form.Item>
-              <Space style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text type="secondary">Ответим в рабочие часы.</Text>
-                <Button type="primary" htmlType="submit" loading={submitting} icon={<SendOutlined />}>
-                  Отправить
-                </Button>
-              </Space>
-            </Form>
-          </Modal>
-        </Space>
-      </div>
-    </div>
-  );
+					<Modal
+						title='Оставьте контакт'
+						open={contactModalOpen}
+						onCancel={() => setContactModalOpen(false)}
+						footer={null}
+						destroyOnClose
+						centered
+					>
+						<Text type='secondary'>
+							Пара строк: куда написать и чем помочь. Это займёт меньше
+							минуты.
+						</Text>
+						<Form
+							form={form}
+							layout='vertical'
+							requiredMark={false}
+							onFinish={async (values) => {
+								const isSent = await handleSubmit(values)
+								if (isSent) {
+									setContactModalOpen(false)
+								}
+							}}
+							style={{ marginTop: 16 }}
+						>
+							<Form.Item
+								name='contact'
+								label='Контакт'
+								rules={[
+									{
+										required: true,
+										message: 'Укажите почту или Telegram'
+									}
+								]}
+							>
+								<Input
+									size='large'
+									prefix={<MailOutlined />}
+									placeholder='example@email.com или @username'
+									autoComplete='email'
+									allowClear
+								/>
+							</Form.Item>
+							<Form.Item name='note' label='Пару слов о задачах'>
+								<Input.TextArea
+									size='large'
+									placeholder='Что хотите улучшить в Pro?'
+									autoSize={{ minRows: 2, maxRows: 3 }}
+									allowClear
+								/>
+							</Form.Item>
+							<Space
+								style={{
+									display: 'flex',
+									justifyContent: 'space-between',
+									alignItems: 'center'
+								}}
+							>
+								<Text type='secondary'>Ответим в рабочие часы.</Text>
+								<Button
+									type='primary'
+									htmlType='submit'
+									loading={submitting}
+									icon={<SendOutlined />}
+								>
+									Отправить
+								</Button>
+							</Space>
+						</Form>
+					</Modal>
+				</Space>
+			</div>
+		</div>
+  )
 }

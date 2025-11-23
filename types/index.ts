@@ -5,9 +5,8 @@ export type QuestionType = 'theory' | 'coding' | 'behavioral' | 'system_design';
 export type InterviewStage = 'screening' | 'technical' | 'on_site' | 'take_home';
 
 export interface RoleDefinition {
-  slug: string;
-  name: string;
-  category: string;
+	slug: string
+	name: string
 }
 
 export interface AnswerVariant {

@@ -1,43 +1,91 @@
 import type { DataBundle, QuestionRecord, RoleDefinition } from '@/types';
 
 const sectionMeta: Record<string, RoleDefinition> = {
-  Frontend: { slug: 'frontend', name: 'Frontend', category: 'Программирование' },
-  'Вопросы на собеседовании на Java': { slug: 'backend-java', name: 'Backend (Java)', category: 'Программирование' },
-  'Вопросы на собеседовании на Python': { slug: 'backend-python', name: 'Backend (Python)', category: 'Программирование' },
-  'Вопросы на собеседовании на Golang': { slug: 'golang', name: 'Golang', category: 'Программирование' },
-  'Вопросы на собеседовании на PHP': { slug: 'backend-php', name: 'Backend (PHP)', category: 'Программирование' },
-  'Вопросы на собеседовании на C#': { slug: 'backend-csharp', name: 'Backend (C#)', category: 'Программирование' },
-  'Вопросы на собеседовании на C/C++': { slug: 'backend-cpp', name: 'Backend (C/C++)', category: 'Программирование' },
-  'Вопросы на собеседовании на 1С программист': { slug: 'one-c', name: '1C', category: 'Программирование' },
-  'Вопросы на собеседовании на Node.js': { slug: 'backend-nodejs', name: 'Backend (Node.js)', category: 'Программирование' },
-  'Вопросы на собеседовании на iOS / Swift': { slug: 'ios', name: 'iOS / Swift', category: 'Программирование' },
-  'Вопросы на собеседовании на Android': { slug: 'android', name: 'Android', category: 'Программирование' },
-  'Вопросы на собеседовании на Flutter': { slug: 'flutter', name: 'Flutter', category: 'Программирование' },
-  'Вопросы на собеседовании на Unity': { slug: 'unity', name: 'Unity', category: 'Программирование' },
-  'Вопросы на собеседовании на DevOps': { slug: 'devops', name: 'DevOps', category: 'Программирование' },
-  'Вопросы на собеседовании на Data Engineer': { slug: 'data-engineer', name: 'Data Engineer', category: 'Программирование' },
-  'Вопросы на собеседовании на QA Тестировщик': { slug: 'qa', name: 'QA', category: 'Тестирование' },
-  'Вопросы на собеседовании на AQA / Automation': { slug: 'aqa', name: 'AQA', category: 'Тестирование' },
-  'Вопросы на собеседовании на Data Science': { slug: 'data-scientist', name: 'Data Scientist', category: 'Аналитика / Data' },
-  'Вопросы на собеседовании на Бизнес Аналитик': { slug: 'business-analyst', name: 'Business Analyst', category: 'Аналитика / Data' },
-  'Вопросы на собеседовании на Системный Аналитик': { slug: 'system-analyst', name: 'System Analyst', category: 'Аналитика / Data' },
-  'Вопросы на собеседовании на Аналитик Данных': { slug: 'data-analyst', name: 'Data Analyst', category: 'Аналитика / Data' },
-  'Вопросы на собеседовании на Продуктовый Аналитик': {
-    slug: 'product-analyst',
-    name: 'Product Analyst',
-    category: 'Аналитика / Data',
-  },
-  'Вопросы на собеседовании на Менеджер Проектов': {
-    slug: 'it-project-manager',
-    name: 'IT Project Manager',
-    category: 'Управление',
-  },
-  'Вопросы на собеседовании на Продукт Менеджер': {
-    slug: 'it-product-manager',
-    name: 'IT Product Manager',
-    category: 'Управление',
-  },
-};
+	Frontend: { slug: 'frontend', name: 'Frontend' },
+	'Вопросы на собеседовании на Java': {
+		slug: 'backend-java',
+		name: 'Backend (Java)'
+	},
+	'Вопросы на собеседовании на Python': {
+		slug: 'backend-python',
+		name: 'Backend (Python)'
+	},
+	'Вопросы на собеседовании на Golang': { slug: 'golang', name: 'Golang' },
+	'Вопросы на собеседовании на PHP': {
+		slug: 'backend-php',
+		name: 'Backend (PHP)'
+	},
+	'Вопросы на собеседовании на C#': {
+		slug: 'backend-csharp',
+		name: 'Backend (C#)'
+	},
+	'Вопросы на собеседовании на C/C++': {
+		slug: 'backend-cpp',
+		name: 'Backend (C/C++)'
+	},
+	'Вопросы на собеседовании на 1С программист': { slug: 'one-c', name: '1C' },
+	'Вопросы на собеседовании на Node.js': {
+		slug: 'backend-nodejs',
+		name: 'Backend (Node.js)'
+	},
+	'Вопросы на собеседовании на iOS / Swift': {
+		slug: 'ios',
+		name: 'iOS / Swift'
+	},
+	'Вопросы на собеседовании на Android': { slug: 'android', name: 'Android' },
+	'Вопросы на собеседовании на Flutter': { slug: 'flutter', name: 'Flutter' },
+	'Вопросы на собеседовании на Unity': { slug: 'unity', name: 'Unity' },
+	'Вопросы на собеседовании на DevOps': { slug: 'devops', name: 'DevOps' },
+	'Вопросы на собеседовании на Data Engineer': {
+		slug: 'data-engineer',
+		name: 'Data Engineer'
+	},
+	'Вопросы на собеседовании на QA Тестировщик': {
+		slug: 'qa',
+		name: 'QA',
+		category: 'Тестирование'
+	},
+	'Вопросы на собеседовании на AQA / Automation': {
+		slug: 'aqa',
+		name: 'AQA',
+		category: 'Тестирование'
+	},
+	'Вопросы на собеседовании на Data Science': {
+		slug: 'data-scientist',
+		name: 'Data Scientist',
+		category: 'Аналитика / Data'
+	},
+	'Вопросы на собеседовании на Бизнес Аналитик': {
+		slug: 'business-analyst',
+		name: 'Business Analyst',
+		category: 'Аналитика / Data'
+	},
+	'Вопросы на собеседовании на Системный Аналитик': {
+		slug: 'system-analyst',
+		name: 'System Analyst',
+		category: 'Аналитика / Data'
+	},
+	'Вопросы на собеседовании на Аналитик Данных': {
+		slug: 'data-analyst',
+		name: 'Data Analyst',
+		category: 'Аналитика / Data'
+	},
+	'Вопросы на собеседовании на Продуктовый Аналитик': {
+		slug: 'product-analyst',
+		name: 'Product Analyst',
+		category: 'Аналитика / Data'
+	},
+	'Вопросы на собеседовании на Менеджер Проектов': {
+		slug: 'it-project-manager',
+		name: 'IT Project Manager',
+		category: 'Управление'
+	},
+	'Вопросы на собеседовании на Продукт Менеджер': {
+		slug: 'it-product-manager',
+		name: 'IT Product Manager',
+		category: 'Управление'
+	}
+}
 
 type AnswerPack = Pick<
   QuestionRecord,
