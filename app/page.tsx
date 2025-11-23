@@ -29,6 +29,12 @@ const gradients = [
   'linear-gradient(135deg, #059669 0%, #0f766e 100%)',
 ];
 
+const videoStats = [
+  { value: '2 000+', label: 'видео-ответов с таймкодами' },
+  { value: '4 000+', label: 'живых собеседований и вебинаров' },
+  { value: '12 000+', label: 'минут насмотренности в подборке' },
+];
+
 const videoBackgrounds: Record<string, string> = {
   'from-indigo-500 to-violet-500': 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
   'from-amber-500 to-orange-600': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -338,11 +344,34 @@ export default function HomePage() {
           <Space direction="vertical" size={24} style={{ width: '100%' }}>
             <Row align="middle" justify="space-between" gutter={[16, 16]}>
               <Col>
-                <Space direction="vertical" size={4}>
+                <Space direction="vertical" size={8}>
+                  <Tag color="blue" style={{ alignSelf: 'flex-start' }}>
+                    Прокачайте насмотренность
+                  </Tag>
                   <Title level={3} style={{ margin: 0 }}>
-                    Видео-ответы
+                    Видео-ответы и разборы
                   </Title>
-                  <Text type="secondary">Открытые интервью и вебинары. Таймкоды ведут к важным моментам.</Text>
+                  <Text type="secondary">
+                    Библиотека ответов кандидатов и разборов интервью: смотрите, как отвечают другие, и собирайте конспекты
+                    по таймкодам.
+                  </Text>
+                  <Space wrap size={[12, 12]}>
+                    {videoStats.map((stat) => (
+                      <Card
+                        key={stat.label}
+                        size="small"
+                        style={{ borderRadius: 16, minWidth: 220, boxShadow: '0 12px 30px rgba(15, 23, 42, 0.08)' }}
+                        bodyStyle={{ padding: '12px 16px' }}
+                      >
+                        <Space direction="vertical" size={4}>
+                          <Title level={4} style={{ margin: 0 }}>
+                            {stat.value}
+                          </Title>
+                          <Text type="secondary">{stat.label}</Text>
+                        </Space>
+                      </Card>
+                    ))}
+                  </Space>
                 </Space>
               </Col>
               <Col>
