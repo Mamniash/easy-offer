@@ -1,21 +1,7 @@
 'use client';
 
 import { ArrowRightOutlined, LockFilled, PlayCircleFilled } from '@ant-design/icons';
-import {
-  Avatar,
-  Button,
-  Card,
-  Carousel,
-  Col,
-  Divider,
-  List,
-  Progress,
-  Row,
-  Space,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Avatar, Button, Card, Carousel, Col, Divider, List, Row, Space, Tag, Tooltip, Typography } from 'antd';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
@@ -154,54 +140,6 @@ const CompaniesPreview = () => {
   );
 };
 
-const QuestionPreview = ({
-  questions,
-}: {
-  questions: {
-    id: string;
-    title: string;
-    frequencyScore: number;
-    chance: number;
-  }[];
-}) => (
-  <List
-    dataSource={questions}
-    renderItem={(question) => (
-      <List.Item key={question.id}>
-        <Card
-          style={{ width: '100%', borderRadius: 20 }}
-          bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}
-        >
-          <Row gutter={[16, 16]} align="middle" justify="space-between">
-            <Col flex="auto">
-              <Title level={5} style={{ margin: 0 }}>
-                {question.title}
-              </Title>
-            </Col>
-            <Col>
-              <Space size="small">
-                <Tooltip title="Вероятность услышать вопрос на ближайшем интервью">
-                  <Tag color="geekblue">Шанс {Math.round(question.chance)}%</Tag>
-                </Tooltip>
-                <Tooltip title="Частота упоминаний за последние недели">
-                  <Tag color="cyan">Частота {Math.round(question.frequencyScore)}%</Tag>
-                </Tooltip>
-              </Space>
-            </Col>
-          </Row>
-          <Progress
-            percent={Math.min(question.frequencyScore, 100)}
-            showInfo={false}
-            strokeColor={{ from: '#6366f1', to: '#a855f7' }}
-            strokeWidth={12}
-            style={{ marginBottom: 0 }}
-          />
-        </Card>
-      </List.Item>
-    )}
-  />
-);
-
 export default function HomePage() {
   const { bundle, isCustom, lastUpdated } = useDataContext();
 
@@ -228,20 +166,6 @@ export default function HomePage() {
     return mapped;
   }, [bundle.roles]);
 
-  const topQuestions = useMemo(
-    () =>
-      [...bundle.questions]
-        .sort((a, b) => b.frequencyScore - a.frequencyScore)
-        .slice(0, 6)
-        .map((question) => ({
-          id: question.id,
-          title: question.title,
-          frequencyScore: question.frequencyScore,
-          chance: question.chance,
-        })),
-    [bundle.questions],
-  );
-
   const proPerks = [
     'Полные библиотеки вопросов без лимитов',
     'Фильтрация по компаниям и форматам интервью',
@@ -264,7 +188,7 @@ export default function HomePage() {
               <Col xs={24} lg={14}>
                 <Space direction="vertical" size={24} style={{ width: '100%' }}>
                   <Tag color="rgba(255,255,255,0.25)" style={{ alignSelf: 'flex-start', color: '#fff' }}>
-                    easyOffer demo · {isCustom ? 'импортированные данные' : 'синтетический набор'}
+                    easyOffer demo · {isCustom ? 'импортированные данные' : 'реальные вопросы'}
                   </Tag>
                   <Title level={1} style={{ color: '#fff', margin: 0 }}>
                     Подготовься к собеседованию так, как будто ты уже внутри команды мечты
@@ -284,51 +208,57 @@ export default function HomePage() {
                 </Space>
               </Col>
               <Col xs={24} lg={10}>
-                <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
-                      <Space direction="vertical" size={8}>
-                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Вопросов в демо</Text>
-                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
-                          {statFormatter(bundle.questions.length)}
-                        </Title>
-                      </Space>
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
-                      <Space direction="vertical" size={8}>
-                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Компаний отслеживаем</Text>
-                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
-                          {statFormatter(bundle.companies.length)}
-                        </Title>
-                      </Space>
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
-                      <Space direction="vertical" size={8}>
-                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Обновлено</Text>
-                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
-                          {formatDate(lastUpdated)}
-                        </Title>
-                      </Space>
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
-                      <Space direction="vertical" size={8}>
-                        <Text style={{ color: 'rgba(255,255,255,0.75)' }}>Средняя вероятность</Text>
-                        <Title level={2} style={{ color: '#fff', margin: 0 }}>
-                          {statFormatter(
-                            bundle.questions.reduce((acc, item) => acc + item.chance, 0) /
-                              Math.max(bundle.questions.length, 1),
-                          )}%
-                        </Title>
-                      </Space>
-                    </Card>
-                  </Col>
-                </Row>
+                <Card
+                  bordered={false}
+                  style={{
+                    borderRadius: 20,
+                    background: 'rgba(255,255,255,0.08)',
+                    padding: 12,
+                    height: '100%',
+                  }}
+                  bodyStyle={{ padding: 12 }}
+                >
+                  <Row gutter={[12, 12]}>
+                    {[{
+                      label: 'Основано на',
+                      value: '2 700+',
+                      hint: 'реальных собеседований за последние 6 месяцев',
+                    },
+                    {
+                      label: 'Разобрали',
+                      value: '2 120',
+                      hint: 'вопросов и ответов уровня Middle/Senior',
+                    },
+                    {
+                      label: 'Следим за',
+                      value: `${statFormatter(bundle.companies.length)} брендами`,
+                      hint: 'и форматами интервью',
+                    },
+                    {
+                      label: 'Обновляем',
+                      value: formatDate(lastUpdated),
+                      hint: 'чтобы подсвечивать свежие тренды',
+                    }].map((stat) => (
+                      <Col key={stat.label} span={12}>
+                        <Card
+                          bordered={false}
+                          style={{
+                            borderRadius: 16,
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))',
+                            height: '100%',
+                          }}
+                          bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 6, padding: 16 }}
+                        >
+                          <Text style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{stat.label}</Text>
+                          <Title level={2} style={{ color: '#fff', margin: 0 }}>
+                            {stat.value}
+                          </Title>
+                          <Text style={{ color: 'rgba(255,255,255,0.75)' }}>{stat.hint}</Text>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </Card>
               </Col>
             </Row>
           </div>
@@ -401,37 +331,6 @@ export default function HomePage() {
               </Col>
             </Row>
             <CompaniesPreview />
-          </Space>
-        </div>
-
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <Space direction="vertical" size={24} style={{ width: '100%' }}>
-            <Space direction="vertical" size={8}>
-              <Title level={3} style={{ margin: 0 }}>
-                Как выглядят вопросы
-              </Title>
-              <Text type="secondary">
-                Ранжируем по частоте, подсвечиваем шанс и даём краткое описание. Ниже — шесть примеров.
-              </Text>
-            </Space>
-            <QuestionPreview questions={topQuestions} />
-            <Card
-              style={{
-                borderRadius: 24,
-                background: 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)',
-              }}
-              bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start' }}
-            >
-              <Text strong style={{ textTransform: 'uppercase', color: '#4f46e5', letterSpacing: 1 }}>
-                Ограничение демо
-              </Text>
-              <Title level={4} style={{ margin: 0 }}>
-                Доступно 50 карточек на роль. Остальное откроется в Pro-подписке.
-              </Title>
-              <Button type="primary" href="/pro">
-                Оформить Pro
-              </Button>
-            </Card>
           </Space>
         </div>
 
