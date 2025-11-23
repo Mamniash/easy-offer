@@ -1,9 +1,9 @@
 'use client';
 
 import { ArrowRightOutlined, LockFilled, PlayCircleFilled } from '@ant-design/icons';
-import { Avatar, Button, Card, Carousel, Col, Divider, List, Row, Space, Tag, Tooltip, Typography } from 'antd';
+import { Avatar, Button, Card, Carousel, Col, Divider, Modal, Row, Space, Tag, Typography } from 'antd';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { formatDate } from '@/lib/date';
 import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
@@ -25,6 +25,8 @@ const gradients = [
   'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
   'linear-gradient(135deg, #059669 0%, #0f766e 100%)',
 ];
+
+const formatNumber = (value: number) => new Intl.NumberFormat('ru-RU').format(Math.round(value));
 
 const videoStats = [
   { value: '2 000+', label: 'видео-ответов с таймкодами' },
@@ -88,58 +90,118 @@ const RoleCard = ({
 };
 
 const CompaniesPreview = () => {
-  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 18), []);
+  const slides = useMemo(() => chunkArray(POPULAR_COMPANIES, 8), []);
+  const [selected, setSelected] = useState<typeof POPULAR_COMPANIES[number] | null>(null);
 
   return (
-    <Carousel dots>
-      {slides.map((companies, pageIndex) => (
-        <div key={pageIndex}>
-          <Space wrap size={[12, 12]} style={{ width: '100%', justifyContent: 'center' }}>
-            {companies.map((company) => {
-              const initials = company.name
-                .split(' ')
-                .map((part) => part[0])
-                .join('')
-                .slice(0, 2)
-                .toUpperCase();
+    <>
+      <Carousel dots>
+        {slides.map((companies, pageIndex) => (
+          <div key={pageIndex}>
+            <Row gutter={[16, 16]}>
+              {companies.map((company, index) => {
+                const initials = company.name
+                  .split(' ')
+                  .map((part) => part[0])
+                  .join('')
+                  .slice(0, 2)
+                  .toUpperCase();
+                const accent = company.accent ?? gradients[index % gradients.length];
 
-              return (
-                <Tooltip key={company.name} title="Фильтры по брендам доступны в Pro">
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      padding: '10px 14px',
-                      borderRadius: 999,
-                      border: '1px solid #e5e7eb',
-                      background: '#fff',
-                      boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
-                      position: 'relative',
-                      minWidth: 180,
-                    }}
-                  >
-                    <Avatar
-                      shape="circle"
-                      src={company.logo}
+                return (
+                  <Col key={company.name} xs={24} sm={12} lg={6}>
+                    <Card
+                      hoverable
+                      onClick={() => setSelected(company)}
                       style={{
-                        background: company.accent,
-                        color: '#111827',
-                        fontWeight: 700,
+                        borderRadius: 20,
+                        height: '100%',
+                        border: '1px solid #e0e7ff',
+                        boxShadow: '0 18px 32px rgba(31, 41, 55, 0.08)',
+                        background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
                       }}
+                      bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 16 }}
                     >
-                      {initials}
-                    </Avatar>
-                    <Text style={{ fontWeight: 600 }}>{company.name}</Text>
-                    <LockFilled style={{ position: 'absolute', right: 12, color: '#bfbfbf', fontSize: 12 }} />
-                  </div>
-                </Tooltip>
-              );
-            })}
+                      <Space size={14} align="center">
+                        <Avatar
+                          size={64}
+                          src={company.logo}
+                          style={{
+                            background: accent,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 700,
+                          }}
+                        >
+                          {initials}
+                        </Avatar>
+                        <Space direction="vertical" size={2} style={{ flex: 1 }}>
+                          <Text strong style={{ fontSize: 18, lineHeight: 1.2 }}>
+                            {company.name}
+                          </Text>
+                          <Text type="secondary">≈ {formatNumber(company.mentions)} упоминаний за 4 недели</Text>
+                        </Space>
+                      </Space>
+                      <Space align="center" justify="space-between">
+                        <Tag color="purple" icon={<LockFilled />}>Pro</Tag>
+                        <Text style={{ color: '#6366f1', fontWeight: 600 }}>Смотреть тренды</Text>
+                      </Space>
+                    </Card>
+                  </Col>
+                );
+              })}
+            </Row>
+          </div>
+        ))}
+      </Carousel>
+
+      <Modal
+        open={!!selected}
+        onCancel={() => setSelected(null)}
+        title={
+          selected
+            ? `Фильтры по ${selected.name} — в Pro`
+            : 'Фильтры по компаниям — в Pro'
+        }
+        footer={[
+          <Button key="pro" type="primary" href="/pro">
+            Оформить Pro
+          </Button>,
+          <Button key="close" onClick={() => setSelected(null)}>
+            Закрыть
+          </Button>,
+        ]}
+      >
+        <Space size={16} align="start">
+          <Avatar
+            size={56}
+            src={selected?.logo}
+            style={{
+              background: selected?.accent ?? gradients[0],
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+            }}
+          >
+            {selected?.name
+              .split(' ')
+              .map((part) => part[0])
+              .join('')
+              .slice(0, 2)
+              .toUpperCase()}
+          </Avatar>
+          <Space direction="vertical" size={8} style={{ maxWidth: 420 }}>
+            <Paragraph style={{ margin: 0 }}>
+              Сравнивайте, что спрашивают в {selected?.name ?? 'компаниях'}, выбирайте формат интервью и отслеживайте, какие
+              темы растут быстрее всего. Полные фильтры и подборки доступны после оформления Pro.
+            </Paragraph>
+            <Text type="secondary">Демо-версия показывает только предпросмотр брендов без переходов внутрь.</Text>
           </Space>
-        </div>
-      ))}
-    </Carousel>
+        </Space>
+      </Modal>
+    </>
   );
 };
 
@@ -314,7 +376,10 @@ export default function HomePage() {
                   <Title level={3} style={{ margin: 0 }}>
                     Популярные компании
                   </Title>
-                  <Text type="secondary">В демо только предпросмотр. Полные фильтры — в Pro.</Text>
+                  <Text type="secondary">
+                    Заходите внутрь конкретной компании и смотрите, какие темы спрашивают именно там. В демо — только предпросмотр
+                    брендов.
+                  </Text>
                 </Space>
               </Col>
               <Col>
