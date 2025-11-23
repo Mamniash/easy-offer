@@ -1,7 +1,7 @@
 'use client';
 
 import { LinkOutlined, PlayCircleFilled } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, Col, Modal, Row, Space, Tag, Typography } from 'antd';
+import { Breadcrumb, Button, Card, Col, Modal, Row, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -242,7 +242,9 @@ export default function QuestionPage() {
                           >
                             <Space direction="vertical" size={8}>
                               <Space align="center" size={8}>
-                                <Tag color={sourceMeta[variant.source].color}>{sourceMeta[variant.source].label}</Tag>
+                                <Text type="secondary" style={{ color: sourceMeta[variant.source].color }}>
+                                  {sourceMeta[variant.source].label}
+                                </Text>
                                 <Text strong>{variant.title}</Text>
                               </Space>
                               <Text type="secondary">{variant.summary}</Text>

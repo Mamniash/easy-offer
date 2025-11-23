@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Col, Divider, Form, Input, List, Row, Space, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Divider, Form, Input, List, Row, Space, Typography, message } from 'antd';
 import { CalendarOutlined, CheckCircleFilled, ClockCircleOutlined, MailOutlined, RocketOutlined, SendOutlined } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 
@@ -91,10 +91,6 @@ export default function ProPage() {
             bodyStyle={{ padding: 36, background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', color: '#fff' }}
           >
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
-              <Tag color="gold" style={{ alignSelf: 'flex-start', padding: '6px 12px', fontWeight: 600 }}>
-                <ClockCircleOutlined />{' '}
-                Скоро запуск
-              </Tag>
               <Space size={12} align="center">
                 <RocketOutlined style={{ fontSize: 28 }} />
                 <div>
@@ -183,15 +179,18 @@ export default function ProPage() {
             </Space>
             <Divider style={{ margin: '16px 0' }} />
             <Space size="middle" wrap>
-              <Tag icon={<ClockCircleOutlined />} color="processing">
-                Оповещение о запуске
-              </Tag>
-              <Tag icon={<RocketOutlined />} color="purple">
-                Закрытая бета в приоритете
-              </Tag>
-              <Tag icon={<MailOutlined />} color="blue">
-                Персональные обновления
-              </Tag>
+              <Space size={8} align="center">
+                <ClockCircleOutlined style={{ color: '#595959' }} />
+                <Text>Оповещение о запуске</Text>
+              </Space>
+              <Space size={8} align="center">
+                <RocketOutlined style={{ color: '#595959' }} />
+                <Text>Закрытая бета в приоритете</Text>
+              </Space>
+              <Space size={8} align="center">
+                <MailOutlined style={{ color: '#595959' }} />
+                <Text>Персональные обновления</Text>
+              </Space>
             </Space>
           </Card>
 

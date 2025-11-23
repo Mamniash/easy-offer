@@ -15,7 +15,6 @@ import {
   Segmented,
   Select,
   Space,
-  Tag,
   Tooltip,
   Typography,
 } from 'antd';
@@ -304,9 +303,9 @@ const proMorePerks = [
                   </Row>
                   <Row justify="space-between" align="middle">
                     <Col>
-                      <Space>
-                        <Tag color="geekblue">Найдено {filtered.length}</Tag>
-                        <Tag color="purple">Показываем {visible.length} из {filtered.length}</Tag>
+                      <Space size={12}>
+                        <Text strong>Найдено {filtered.length}</Text>
+                        <Text type="secondary">Показываем {visible.length} из {filtered.length}</Text>
                       </Space>
                     </Col>
                     <Col>
@@ -421,20 +420,14 @@ const proMorePerks = [
                                     <Text strong style={{ fontSize: 18, lineHeight: 1.3 }}>
                                       {question.title}
                                     </Text>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                                      <Tag bordered={false} color="geekblue">
-                                        {LEVEL_LABELS[question.level]}
-                                      </Tag>
-                                      <Tag bordered={false} color="purple">
-                                        {TYPE_LABELS[question.type]}
-                                      </Tag>
-                                      <Tag bordered={false} color="cyan">
-                                        {STAGE_LABELS[question.interviewStage]}
-                                      </Tag>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                                      <Text type="secondary">{LEVEL_LABELS[question.level]}</Text>
+                                      <Text type="secondary">{TYPE_LABELS[question.type]}</Text>
+                                      <Text type="secondary">{STAGE_LABELS[question.interviewStage]}</Text>
                                       {question.tags.slice(0, 3).map((tag) => (
-                                        <Tag key={tag} bordered={false}>
+                                        <Text key={tag} type="secondary">
                                           #{tag}
-                                        </Tag>
+                                        </Text>
                                       ))}
                                     </div>
                                     <Text type="secondary">
@@ -520,9 +513,10 @@ const proMorePerks = [
                           </Text>
                         </Col>
                         <Col>
-                          <Tag icon={<LockFilled />} color="purple">
-                            Pro
-                          </Tag>
+                          <Space size={6} align="center">
+                            <LockFilled style={{ color: '#722ed1' }} />
+                            <Text type="secondary">Pro</Text>
+                          </Space>
                         </Col>
                       </Row>
                       <Text type="secondary">
@@ -560,17 +554,18 @@ const proMorePerks = [
                                 >
                                   {initials}
                                 </Avatar>
-                                <Space direction="vertical" size={0}>
-                                  <Text strong>{company.name}</Text>
-                                  <Text type="secondary">≈ {formatNumber(company.mentions)} упоминаний за 4 недели</Text>
-                                </Space>
+                              <Space direction="vertical" size={0}>
+                                <Text strong>{company.name}</Text>
+                                <Text type="secondary">≈ {formatNumber(company.mentions)} упоминаний за 4 недели</Text>
                               </Space>
-                              <Tag icon={<LockFilled />} color="purple">
-                                Pro
-                              </Tag>
-                            </Card>
-                          );
-                        })}
+                            </Space>
+                            <Space size={6} align="center">
+                              <LockFilled style={{ color: '#722ed1' }} />
+                              <Text type="secondary">Pro</Text>
+                            </Space>
+                          </Card>
+                        );
+                      })}
                       </Space>
                       <Card style={{ borderRadius: 16, background: '#f8fafc' }}>
                         <Text type="secondary" style={{ fontSize: 12 }}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowRightOutlined, CheckCircleFilled, PlayCircleFilled } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Divider, List, Row, Space, Tag, Typography } from 'antd';
+import { Badge, Button, Card, Col, Divider, List, Row, Space, Typography } from 'antd';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -100,9 +100,6 @@ export default function LandingPage() {
             <Row gutter={[48, 48]} align="middle">
               <Col xs={24} lg={14}>
                 <Space direction="vertical" size={32} style={{ width: '100%' }}>
-                  <Tag color="purple" style={{ alignSelf: 'flex-start' }}>
-                    Демодоступ уже открыт
-                  </Tag>
                   <Space direction="vertical" size={16} style={{ width: '100%' }}>
                     <Title level={1} style={{ color: '#f8fafc', marginBottom: 0 }}>
                       Подготовься к собеседованию в IT быстрее, чем потратят вопрос
@@ -268,7 +265,6 @@ export default function LandingPage() {
                     bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                   >
                     <Space direction="vertical" size={8}>
-                      <Tag color="geekblue">Free</Tag>
                       <Title level={3} style={{ margin: 0 }}>
                         Попробуй easyOffer без привязки карты
                       </Title>
@@ -302,9 +298,6 @@ export default function LandingPage() {
                     bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                   >
                     <Space direction="vertical" size={8}>
-                      <Tag color="purple" style={{ alignSelf: 'flex-start' }}>
-                        Pro (скоро)
-                      </Tag>
                       <Title level={3} style={{ margin: 0, color: '#f8fafc' }}>
                         Подготовка без ограничений
                       </Title>
@@ -352,9 +345,6 @@ export default function LandingPage() {
                       style={{ borderRadius: 24, height: '100%', border: '1px solid #e2e8f0', background: '#f8fafc' }}
                       bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12 }}
                     >
-                      <Tag color="cyan" style={{ alignSelf: 'flex-start' }}>
-                        {persona.badge}
-                      </Tag>
                       <Title level={4} style={{ margin: 0 }}>
                         {persona.title}
                       </Title>

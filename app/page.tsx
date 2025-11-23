@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowRightOutlined, LockFilled, PlayCircleFilled } from '@ant-design/icons';
-import { Avatar, Button, Card, Carousel, Col, Divider, List, Row, Space, Tag, Tooltip, Typography } from 'antd';
+import { Avatar, Button, Card, Carousel, Col, Divider, Row, Space, Tooltip, Typography } from 'antd';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
@@ -40,17 +40,7 @@ const videoBackgrounds: Record<string, string> = {
   'from-rose-500 to-pink-600': 'linear-gradient(135deg, #f43f5e 0%, #db2777 100%)',
 };
 
-const RoleCard = ({
-  slug,
-  name,
-  category,
-  index,
-}: {
-  slug: string;
-  name: string;
-  category: string;
-  index: number;
-}) => {
+const RoleCard = ({ slug, name, index }: { slug: string; name: string; index: number }) => {
   const background = gradients[index % gradients.length];
   return (
     <Link href={`/roles/${slug}`} style={{ textDecoration: 'none' }}>
@@ -67,9 +57,6 @@ const RoleCard = ({
           color: '#fff',
         }}
       >
-        <Tag color="rgba(255,255,255,0.25)" style={{ alignSelf: 'flex-start', color: '#fff' }}>
-          {category}
-        </Tag>
         <Title level={4} style={{ color: '#fff', margin: 0 }}>
           {name}
         </Title>
@@ -296,7 +283,7 @@ export default function HomePage() {
                   <Row gutter={[24, 24]}>
                     {group.roles.map((role, index) => (
                       <Col key={role.slug} xs={24} sm={12} lg={8}>
-                        <RoleCard slug={role.slug} name={role.name} category={group.category} index={index} />
+                        <RoleCard slug={role.slug} name={role.name} index={index} />
                       </Col>
                     ))}
                   </Row>
