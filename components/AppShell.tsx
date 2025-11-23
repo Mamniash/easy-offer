@@ -31,7 +31,7 @@ const Navigation = () => (
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '16px 0',
+        padding: '12px 0',
       }}
     >
       <Link
@@ -49,8 +49,12 @@ const Navigation = () => (
           style={{
             background: '#1f1f1f',
             color: '#ffffff',
-            borderRadius: 999,
-            padding: '4px 12px',
+            borderRadius: '50%',
+            width: 36,
+            height: 36,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             textTransform: 'uppercase',
             fontSize: 12,
             letterSpacing: 1.2,

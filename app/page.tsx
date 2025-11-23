@@ -12,9 +12,6 @@ import { useDataContext } from '@/providers/DataProvider';
 
 const { Title, Paragraph, Text } = Typography;
 
-const statFormatter = (value: number) =>
-  new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Math.round(value));
-
 const chunkArray = <T,>(items: T[], size: number): T[][] => {
   const result: T[][] = [];
   for (let index = 0; index < items.length; index += size) {
@@ -147,7 +144,7 @@ const CompaniesPreview = () => {
 };
 
 export default function HomePage() {
-  const { bundle, isCustom, lastUpdated } = useDataContext();
+  const { bundle, lastUpdated } = useDataContext();
 
   const grouped = useMemo(() => {
     const roles = new Map(bundle.roles.map((role) => [role.slug, role]));
@@ -185,16 +182,13 @@ export default function HomePage() {
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
             <Row gutter={[48, 32]} align="bottom">
               <Col xs={24} lg={14}>
-                <Space direction="vertical" size={24} style={{ width: '100%' }}>
-                  <Tag color="rgba(255,255,255,0.25)" style={{ alignSelf: 'flex-start', color: '#fff' }}>
-                    easyOffer demo · {isCustom ? 'импортированные данные' : 'реальные вопросы'}
-                  </Tag>
+                <Space direction="vertical" size={20} style={{ width: '100%' }}>
                   <Title level={1} style={{ color: '#fff', margin: 0 }}>
                     Подготовься к собеседованию так, как будто ты уже внутри команды мечты
                   </Title>
                   <Paragraph style={{ color: 'rgba(255,255,255,0.75)', fontSize: 18 }}>
-                    Десятки ролей, частотные вопросы и реальные ответы кандидатов. Мы подсвечиваем, что спрашивают прямо
-                    сейчас, чтобы ты фокусировался на важном.
+                    Частотные вопросы и реальные ответы по десяткам ролей. Показываем, что спрашивают прямо сейчас,
+                    чтобы ты готовился по делу.
                   </Paragraph>
                   <Space size="middle" wrap>
                     <Button type="primary" size="large" href="/roles/frontend">
@@ -220,17 +214,17 @@ export default function HomePage() {
                   <Row gutter={[12, 12]}>
                     {[{
                       label: 'Основано на',
-                      value: '2 700+',
-                      hint: 'реальных собеседований за последние 6 месяцев',
+                      value: '≈ 3 000',
+                      hint: 'реальных собеседований',
                     },
                     {
                       label: 'Разобрали',
-                      value: '2 120',
-                      hint: 'вопросов и ответов уровня Middle/Senior',
+                      value: '300 000+',
+                      hint: 'вопросов и ответов',
                     },
                     {
                       label: 'Следим за',
-                      value: `${statFormatter(bundle.companies.length)} брендами`,
+                      value: '100+ компаниями',
                       hint: 'и форматами интервью',
                     },
                     {
