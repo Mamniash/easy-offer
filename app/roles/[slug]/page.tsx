@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 
+import { POPULAR_COMPANIES } from '@/lib/popularCompanies';
 import { useDataContext } from '@/providers/DataProvider';
 import { useFreeAccess } from '@/providers/FreeAccessProvider';
 import type { QuestionRecord } from '@/types';
@@ -185,9 +186,30 @@ export default function RolePage() {
         map.set(company, (map.get(company) ?? 0) + total);
       });
     });
-    return Array.from(map.entries())
+
+    const aggregated = Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
+      .map(([name, mentions]) => {
+        const preset = POPULAR_COMPANIES.find((company) => company.name === name);
+        return {
+          name,
+          mentions,
+          accent: preset?.accent,
+          logo: preset?.logo,
+        };
+      })
       .slice(0, 12);
+
+    if (aggregated.length > 0) {
+      return aggregated;
+    }
+
+    return POPULAR_COMPANIES.slice(0, 12).map((company) => ({
+      name: company.name,
+      mentions: company.mentions,
+      accent: company.accent,
+      logo: company.logo,
+    }));
   }, [questions]);
 
 const proMorePerks = [
@@ -507,11 +529,19 @@ const proMorePerks = [
                         Смотрим, какие бренды чаще упоминают такие вопросы на интервью.
                       </Text>
                       <Space direction="vertical" size={12}>
-                        {popularCompanies.map(([company, mentions], index) => {
-                          const palette = companyPalette[index % companyPalette.length];
+                        {popularCompanies.map((company, index) => {
+                          const palette = company.accent
+                            ? [company.accent, company.accent]
+                            : companyPalette[index % companyPalette.length];
+                          const initials = company.name
+                            .split(' ')
+                            .map((part) => part[0])
+                            .join('')
+                            .slice(0, 2)
+                            .toUpperCase();
                           return (
                             <Card
-                              key={company}
+                              key={company.name}
                               hoverable
                               onClick={handleCompanyClick}
                               style={{ borderRadius: 20 }}
@@ -526,17 +556,13 @@ const proMorePerks = [
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                   }}
+                                  src={company.logo}
                                 >
-                                  {company
-                                    .split(' ')
-                                    .map((part) => part[0])
-                                    .join('')
-                                    .slice(0, 2)
-                                    .toUpperCase()}
+                                  {initials}
                                 </Avatar>
                                 <Space direction="vertical" size={0}>
-                                  <Text strong>{company}</Text>
-                                  <Text type="secondary">≈ {formatNumber(mentions)} упоминаний за 4 недели</Text>
+                                  <Text strong>{company.name}</Text>
+                                  <Text type="secondary">≈ {formatNumber(company.mentions)} упоминаний за 4 недели</Text>
                                 </Space>
                               </Space>
                               <Tag icon={<LockFilled />} color="purple">
