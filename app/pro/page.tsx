@@ -1,11 +1,82 @@
 'use client';
 
-import { Button, Card, Col, Divider, List, Row, Space, Tag, Typography } from 'antd';
-import { CalendarOutlined, CheckCircleFilled, ClockCircleOutlined, MailOutlined, RocketOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Divider, Form, Input, List, Row, Space, Tag, Typography, message } from 'antd';
+import { CalendarOutlined, CheckCircleFilled, ClockCircleOutlined, MailOutlined, RocketOutlined, SendOutlined } from '@ant-design/icons';
+import { useEffect, useRef, useState } from 'react';
 
 const { Title, Text } = Typography;
 
+const RATE_LIMIT_TIMEOUT = 60 * 1000;
+
+const canSendMessage = () => {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+
+  const lastSent = window.localStorage.getItem('easy-offer-last-message');
+  const now = Date.now();
+
+  if (lastSent && now - Number(lastSent) < RATE_LIMIT_TIMEOUT) {
+    return false;
+  }
+
+  window.localStorage.setItem('easy-offer-last-message', now.toString());
+  return true;
+};
+
 export default function ProPage() {
+  const [form] = Form.useForm();
+  const [submitting, setSubmitting] = useState(false);
+  const [timezone, setTimezone] = useState<string | null>(null);
+  const sessionStartRef = useRef(Date.now());
+
+  useEffect(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setTimezone(tz || null);
+    } catch {
+      setTimezone(null);
+    }
+  }, []);
+
+  const handleSubmit = async (values: { contact: string; note?: string }) => {
+    if (!canSendMessage()) {
+      message.warning('Можно отправить сообщение раз в минуту.');
+      return;
+    }
+
+    const payload = {
+      ...values,
+      entryPoint: 'Pro страница',
+      sessionTime: Math.max(Math.round((Date.now() - sessionStartRef.current) / 1000), 0),
+      url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+      timezone,
+    };
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = (await response.json()) as { ok: boolean; error?: string };
+
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.error || 'Ошибка отправки');
+      }
+
+      message.success('Спасибо! Как только Pro появится, пришлём приглашение.');
+      form.resetFields();
+    } catch (error) {
+      console.error('Ошибка при отправке сообщения', error);
+      message.error('Не удалось отправить заявку. Попробуйте позже.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -106,7 +177,7 @@ export default function ProPage() {
                   Присоединяйтесь к списку раннего доступа
                 </Title>
                 <Text type="secondary">
-                  Оставьте почту в футере: пришлём первые приглашения, как только Pro появится.
+                  Оставьте контакт: пришлём первые приглашения, как только Pro появится.
                 </Text>
               </Space>
             </Space>
@@ -121,6 +192,75 @@ export default function ProPage() {
               <Tag icon={<MailOutlined />} color="blue">
                 Персональные обновления
               </Tag>
+            </Space>
+          </Card>
+
+          <Card
+            style={{
+              borderRadius: 20,
+              border: '1px solid rgba(236, 72, 153, 0.2)',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(236, 72, 153, 0.08) 45%, #ffffff 100%)',
+              boxShadow: '0 20px 60px rgba(99, 102, 241, 0.08)',
+            }}
+            bodyStyle={{ padding: 24 }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Space align="center" size={12} wrap>
+                <SendOutlined style={{ fontSize: 22, color: '#ec4899' }} />
+                <div>
+                  <Title level={4} style={{ margin: 0 }}>
+                    Получите приглашение в Pro
+                  </Title>
+                  <Text type="secondary">Сделали форму компактной: оставьте способ связи и пару слов о задачах.</Text>
+                </div>
+              </Space>
+              <Form
+                form={form}
+                layout="vertical"
+                requiredMark={false}
+                onFinish={handleSubmit}
+                style={{ marginTop: 4 }}
+              >
+                <div
+                  style={{
+                    display: 'grid',
+                    gap: 12,
+                    gridTemplateColumns: '1fr',
+                  }}
+                >
+                  <Form.Item
+                    name="contact"
+                    label="Как с вами связаться"
+                    rules={[{ required: true, message: 'Укажите почту или Telegram' }]}
+                  >
+                    <Input
+                      prefix={<MailOutlined />}
+                      placeholder="example@email.com или @username"
+                      autoComplete="email"
+                      allowClear
+                    />
+                  </Form.Item>
+                  <Form.Item name="note" label="Пару слов о ваших задачах">
+                    <Input.TextArea
+                      placeholder="Например: хочу видеть тренды по компаниям или выгрузку вопросов"
+                      autoSize={{ minRows: 2, maxRows: 3 }}
+                      allowClear
+                    />
+                  </Form.Item>
+                </div>
+                <Space
+                  size={12}
+                  wrap
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}
+                >
+                  <Button type="primary" htmlType="submit" loading={submitting} icon={<SendOutlined />}>
+                    Отправить контакт
+                  </Button>
+                  <Text type="secondary" style={{ marginLeft: 'auto' }}>
+                    Ответим в рабочие часы и пришлём свежие новости.
+                  </Text>
+                </Space>
+              </Form>
             </Space>
           </Card>
         </Space>
