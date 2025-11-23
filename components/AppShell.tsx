@@ -39,29 +39,13 @@ const Navigation = () => (
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
-          fontSize: 18,
-          fontWeight: 600,
+          gap: 10,
+          fontSize: 20,
+          fontWeight: 700,
           color: '#1f1f1f',
+          letterSpacing: 0.2,
         }}
       >
-        <span
-          style={{
-            background: '#1f1f1f',
-            color: '#ffffff',
-            borderRadius: '50%',
-            width: 36,
-            height: 36,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textTransform: 'uppercase',
-            fontSize: 12,
-            letterSpacing: 1.2,
-          }}
-        >
-          demo
-        </span>
         easyOffer
       </Link>
       <Menu
