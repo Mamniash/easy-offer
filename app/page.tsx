@@ -95,13 +95,13 @@ const CompaniesPreview = ({ companies }: { companies: string[] }) => {
           .slice(0, 2)
           .toUpperCase();
         return (
-          <List.Item>
-              <Card
-                size="small"
-                hoverable
-                style={{ borderRadius: 16, position: 'relative' }}
-                bodyStyle={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16 }}
-              >
+          <List.Item key={company}>
+            <Card
+              size="small"
+              hoverable
+              style={{ borderRadius: 16, position: 'relative' }}
+              bodyStyle={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16 }}
+            >
               <Avatar
                 style={{
                   background: companyGradients[index % companyGradients.length],
@@ -197,8 +197,20 @@ export default function HomePage() {
                     <Col key={stat.label} span={12}>
                       <Card
                         bordered={false}
-                        style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)', height: '100%' }}
-                        bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}
+                        style={{
+                          borderRadius: 16,
+                          background: 'rgba(255,255,255,0.1)',
+                          height: '100%',
+                          minHeight: 140,
+                          display: 'flex',
+                        }}
+                        bodyStyle={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 8,
+                          height: '100%',
+                          justifyContent: 'space-between',
+                        }}
                       >
                         <Space direction="vertical" size={8} style={{ width: '100%' }}>
                           <Text
