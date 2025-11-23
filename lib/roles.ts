@@ -14,7 +14,9 @@ export const roleGroups: RoleGroup[] = [
       { slug: 'backend-java', name: 'Backend (Java)', category: 'Программирование' },
       { slug: 'backend-php', name: 'Backend (PHP)', category: 'Программирование' },
       { slug: 'backend-python', name: 'Backend (Python)', category: 'Программирование' },
+      { slug: 'backend-csharp', name: 'Backend (C#)', category: 'Программирование' },
       { slug: 'backend-cpp', name: 'Backend (C/C++)', category: 'Программирование' },
+      { slug: 'flutter', name: 'Flutter', category: 'Программирование' },
       { slug: 'android', name: 'Android', category: 'Программирование' },
       { slug: 'ios', name: 'iOS / Swift', category: 'Программирование' },
       { slug: 'golang', name: 'Golang', category: 'Программирование' },
@@ -34,6 +36,7 @@ export const roleGroups: RoleGroup[] = [
   {
     category: 'Аналитика / Data',
     roles: [
+      { slug: 'business-analyst', name: 'Business Analyst', category: 'Аналитика / Data' },
       { slug: 'data-analyst', name: 'Data Analyst', category: 'Аналитика / Data' },
       { slug: 'data-scientist', name: 'Data Scientist', category: 'Аналитика / Data' },
       { slug: 'system-analyst', name: 'System Analyst', category: 'Аналитика / Data' },
