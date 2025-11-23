@@ -121,7 +121,7 @@ const CompaniesPreview = ({ companies }: { companies: string[] }) => {
 };
 
 export default function HomePage() {
-  const { bundle, isCustom, lastUpdated } = useDataContext();
+  const { bundle, lastUpdated } = useDataContext();
 
   const grouped = useMemo(() => {
     const roles = new Map(bundle.roles.map((role) => [role.slug, role]));
@@ -145,8 +145,6 @@ export default function HomePage() {
     }
     return mapped;
   }, [bundle.roles]);
-
-  const datasetLabel = isCustom ? 'импортированная база' : 'живые интервью кандидатов';
 
   const heroStats = [
     { label: 'Интервью в базе', value: '2 700+' },
@@ -176,9 +174,6 @@ export default function HomePage() {
             <Row gutter={[48, 32]} align="bottom">
               <Col xs={24} lg={14}>
                 <Space direction="vertical" size={24} style={{ width: '100%' }}>
-                  <Tag color="rgba(255,255,255,0.25)" style={{ alignSelf: 'flex-start', color: '#fff' }}>
-                    easyOffer demo · {datasetLabel}
-                  </Tag>
                   <Title level={1} style={{ color: '#fff', margin: 0 }}>
                     Подготовься к собеседованию так, как будто ты уже внутри команды мечты
                   </Title>
@@ -197,12 +192,25 @@ export default function HomePage() {
                 </Space>
               </Col>
               <Col xs={24} lg={10}>
-                <Row gutter={[16, 16]}>
+                <Row gutter={[16, 16]} align="stretch">
                   {heroStats.map((stat) => (
                     <Col key={stat.label} span={12}>
-                      <Card bordered={false} style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)' }}>
-                        <Space direction="vertical" size={8}>
-                          <Text style={{ color: 'rgba(255,255,255,0.75)' }}>{stat.label}</Text>
+                      <Card
+                        bordered={false}
+                        style={{ borderRadius: 16, background: 'rgba(255,255,255,0.1)', height: '100%' }}
+                        bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}
+                      >
+                        <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                          <Text
+                            style={{
+                              color: 'rgba(255,255,255,0.75)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {stat.label}
+                          </Text>
                           <Title level={2} style={{ color: '#fff', margin: 0 }}>
                             {stat.value}
                           </Title>
